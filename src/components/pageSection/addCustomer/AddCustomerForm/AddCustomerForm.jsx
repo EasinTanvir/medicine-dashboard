@@ -1,5 +1,6 @@
 "use client";
 
+import { companies } from "@/libs/companies";
 import React from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { MdPersonAddAlt1 } from "react-icons/md";
@@ -156,17 +157,25 @@ const AddCustomerForm = () => {
                 )}
               </div>
 
-              {/* Brand */}
+              {/* Company Dropdown */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
                   Company (optional)
                 </label>
-                <input
-                  type="text"
-                  placeholder="Enter brand name"
+                <select
+                  defaultValue=""
                   {...register(`medicines.${index}.brand`)}
-                  className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300"
-                />
+                  className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300 bg-white"
+                >
+                  <option value="" disabled>
+                    Select company
+                  </option>
+                  {companies.map((company) => (
+                    <option key={company.id} value={company.slug}>
+                      {company.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               {/* Remove Button (if more than one) */}
