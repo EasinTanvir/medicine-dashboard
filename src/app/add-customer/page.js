@@ -1,10 +1,10 @@
-import Customers from "@/components/pageSection/customers/Customers";
 import React from "react";
+import AddCustomer from "@/components/pageSection/addCustomer/AddCustomer";
 
 const CustomersPage = () => {
   return (
     <div>
-      <Customers />
+      <AddCustomer />
     </div>
   );
 };

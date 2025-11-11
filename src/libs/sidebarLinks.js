@@ -5,13 +5,19 @@ import {
   MdPointOfSale,
   MdPeopleOutline,
 } from "react-icons/md";
-
+import { RiUserAddLine } from "react-icons/ri";
 export const sidebarItems = [
   {
     key: "dashboard",
     label: "Dashboard",
     href: "/",
     icon: <MdDashboard className="w-6 h-6" />,
+  },
+  {
+    key: "AddCustomer",
+    label: "Add Customer",
+    href: "/add-customer",
+    icon: <RiUserAddLine className="w-6 h-6" />,
   },
   {
     key: "customers",
