@@ -1,7 +1,12 @@
+import Medicines from "@/components/pageSection/medicines/Medicines";
 import React from "react";
 
-const Medicines = () => {
-  return <div>Medicines</div>;
+const MedicinePage = () => {
+  return (
+    <div>
+      <Medicines />
+    </div>
+  );
 };
 
-export default Medicines;
+export default MedicinePage;

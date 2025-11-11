@@ -1,10 +1,10 @@
+import AddMedicineForm from "@/components/pageSection/addMedicine/AddMedicineForm";
 import React from "react";
-import AddMedicine from "@/components/pageSection/addMedicine/AddMedicine";
 
 const CustomersPage = () => {
   return (
     <div className="pt-20">
-      <AddMedicine />
+      <AddMedicineForm />
     </div>
   );
 };
