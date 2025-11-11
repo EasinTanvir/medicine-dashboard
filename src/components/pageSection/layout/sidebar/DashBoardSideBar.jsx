@@ -28,7 +28,7 @@ const DashBoardSideBar = () => {
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className={`bg-black text-white z-40 shadow-lg ${
         openSidebar ? "px-2" : "sm:px-3.5 px-2"
-      } sm:pt-[85px] pt-[75px] pb-20 scrollbar-hide rounded-t-sm rounded-b-sm min-h-screen max-h-screen overflow-y-auto fixed top-0 left-0 overflow-hidden`}
+      } py-10 scrollbar-hide rounded-t-sm rounded-b-sm min-h-screen max-h-screen overflow-y-auto fixed top-0 left-0 overflow-hidden`}
     >
       {/* ✅ Brand Section */}
       <div
