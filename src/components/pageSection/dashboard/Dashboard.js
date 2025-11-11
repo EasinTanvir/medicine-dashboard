@@ -4,6 +4,7 @@ import React from "react";
 import CustomersCard from "./CustomersCard/CustomersCard";
 import MedicinesCard from "./MedicinesCard/MedicinesCard";
 import SalesCard from "./SalesCard/SalesCard";
+import CompanyCard from "./CompanyCard/CompanyCard";
 
 const Dashboard = () => {
   const customersData = [
@@ -27,16 +28,24 @@ const Dashboard = () => {
     { id: 4, amount: 120 },
   ];
 
+  const companyData = [
+    { id: 1, name: "Square Pharma", status: "active" },
+    { id: 2, name: "Incepta", status: "active" },
+    { id: 3, name: "Beximco", status: "pending" },
+    { id: 4, name: "Renata", status: "active" },
+  ];
+
   return (
     <div className="p-5">
       <h1 className="text-3xl font-bold text-gray-800 mb-6">
         Dashboard Analytics
       </h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2  gap-6">
         <CustomersCard data={customersData} />
         <MedicinesCard data={medicinesData} />
         <SalesCard data={salesData} />
+        <CompanyCard data={companyData} />
       </div>
     </div>
   );
