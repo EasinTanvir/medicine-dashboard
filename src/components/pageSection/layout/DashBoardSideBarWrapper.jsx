@@ -12,7 +12,7 @@ const DashBoardSideBarWrapper = ({ children }) => {
       <DashBoardSideBar />
       <div
         className={`transition-all duration-200 ${
-          openSidebar ? "pl-[70px]" : "lg:pl-[298px] pl-[72px]"
+          openSidebar ? "pl-[70px]" : "lg:pl-[258px] pl-[72px]"
         } `}
       >
         <div className="py-4">{children}</div>

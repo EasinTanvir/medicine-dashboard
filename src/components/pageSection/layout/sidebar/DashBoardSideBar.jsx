@@ -24,7 +24,7 @@ const DashBoardSideBar = () => {
   return (
     <motion.div
       initial={false}
-      animate={{ width: openSidebar ? "4rem" : "17rem" }}
+      animate={{ width: openSidebar ? "4rem" : "15rem" }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
       className={`bg-black text-white z-40 shadow-lg ${
         openSidebar ? "px-2" : "sm:px-3.5 px-2"
@@ -79,7 +79,7 @@ const DashBoardSideBar = () => {
             marginLeft: openSidebar ? 0 : 12,
           }}
           transition={{ duration: 0.25 }}
-          className="text-xl font-900 whitespace-nowrap overflow-hidden"
+          className="text-base font-900 whitespace-nowrap overflow-hidden"
         >
           Collapse
         </motion.span>

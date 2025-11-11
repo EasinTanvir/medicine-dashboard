@@ -48,7 +48,7 @@ const SidebarItem = ({ item, openSidebar, setOpenSidebar }) => {
           marginLeft: openSidebar ? 0 : 8,
         }}
         transition={{ duration: 0.1 }}
-        className={`text-lg font-semibold whitespace-nowrap overflow-hidden`}
+        className={`text-base font-semibold whitespace-nowrap overflow-hidden`}
       >
         {item.label}
       </motion.span>
