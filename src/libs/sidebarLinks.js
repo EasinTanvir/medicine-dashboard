@@ -53,6 +53,12 @@ export const sidebarItems = [
     icon: <MdOutlineBusiness className="w-6 h-6 text-indigo-600" />,
   },
   {
+    key: "add-sale",
+    label: "Add Sell",
+    href: "/add-sale",
+    icon: <MdPointOfSale className="w-6 h-6 text-pink-600" />,
+  },
+  {
     key: "sales",
     label: "Sales",
     href: "/sales",

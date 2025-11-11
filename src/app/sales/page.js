@@ -1,7 +1,12 @@
+import Sales from "@/components/pageSection/sales/Sales";
 import React from "react";
 
-const Sells = () => {
-  return <div>Sells</div>;
+const SalesPage = () => {
+  return (
+    <div>
+      <Sales />
+    </div>
+  );
 };
 
-export default Sells;
+export default SalesPage;
