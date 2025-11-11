@@ -4,17 +4,18 @@ import {
   MdPointOfSale,
   MdPeopleOutline,
   MdOutlineBusiness,
-  MdOutlineListAlt,
+  MdHistory,
 } from "react-icons/md";
 import { RiUserAddLine } from "react-icons/ri";
 import { FaPlusCircle } from "react-icons/fa";
+import { BsCartPlusFill } from "react-icons/bs";
 
 export const sidebarItems = [
   {
     key: "dashboard",
     label: "Dashboard",
     href: "/",
-    icon: <MdDashboard className="w-6 h-6" />,
+    icon: <MdDashboard className="w-6 h-6 text-gray-700" />,
   },
   {
     key: "add-customer",
@@ -54,14 +55,14 @@ export const sidebarItems = [
   },
   {
     key: "add-sale",
-    label: "Add Sell",
+    label: "Add Sale",
     href: "/add-sale",
-    icon: <MdPointOfSale className="w-6 h-6 text-pink-600" />,
+    icon: <BsCartPlusFill className="w-6 h-6 text-pink-600" />,
   },
   {
-    key: "sales",
-    label: "Sales",
-    href: "/sales",
-    icon: <MdPointOfSale className="w-6 h-6 text-pink-600" />,
+    key: "sells",
+    label: "Sales History",
+    href: "/sells",
+    icon: <MdHistory className="w-6 h-6 text-rose-600" />,
   },
 ];
