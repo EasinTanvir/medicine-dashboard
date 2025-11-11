@@ -1,10 +1,10 @@
 import React from "react";
-import AddCustomer from "@/components/pageSection/addCustomer/AddCustomer";
+import AddMedicine from "@/components/pageSection/addMedicine/AddMedicine";
 
 const CustomersPage = () => {
   return (
     <div className="pt-20">
-      <AddCustomer />
+      <AddMedicine />
     </div>
   );
 };

@@ -21,13 +21,19 @@ export const sidebarItems = [
   },
   {
     key: "customers",
-    label: "Customers",
+    label: "Customer Lists",
     href: "/customers",
     icon: <MdPeopleOutline className="w-6 h-6" />,
   },
   {
+    key: "add-medicine",
+    label: "Add medicine",
+    href: "/add-medicine",
+    icon: <MdOutlineLocalPharmacy className="w-6 h-6" />,
+  },
+  {
     key: "medicines",
-    label: "Medicines",
+    label: "Medicine Lists",
     href: "/medicines",
     icon: <MdOutlineLocalPharmacy className="w-6 h-6" />,
   },

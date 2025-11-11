@@ -49,7 +49,7 @@ const DashBoardSideBar = () => {
       </div>
 
       {/* ✅ Sidebar Items */}
-      <div className="space-y-3">
+      <div className="space-y-3.5">
         {sidebarItems.map((item) => (
           <SidebarItem
             key={item.key}
