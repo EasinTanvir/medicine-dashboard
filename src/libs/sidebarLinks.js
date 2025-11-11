@@ -27,9 +27,9 @@ export const sidebarItems = [
   },
 
   {
-    key: "sells",
+    key: "sales",
     label: "Sales",
-    href: "/sells",
+    href: "/sales",
     icon: <MdPointOfSale className="w-6 h-6" />,
   },
 ];
