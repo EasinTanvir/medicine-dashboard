@@ -23,25 +23,23 @@ const SidebarItem = ({ item, openSidebar, setOpenSidebar }) => {
     <Link
       onClick={handleClick}
       href={item.href}
-      className={`flex items-center transition-colors duration-200 overflow-hidden
-        ${openSidebar ? "justify-center px-2" : "gap-4 px-4"} py-5 w-full
+      className={`flex items-center transition-all duration-200 overflow-hidden rounded-md
+        ${openSidebar ? "justify-center px-2" : "gap-4 px-4"} py-4 w-full
         ${
           isActive
-            ? "dashboard-sidebar-active-text-border"
-            : "bg-dashboard-sidebar-inactive-bg dashboard-sidebar-inactive-border"
+            ? "bg-white text-black"
+            : "bg-transparent hover:bg-gray-800 text-gray-300"
         }
         ${inter.className}`}
     >
-      {/* ✅ Replace Image with icon */}
       <div
-        className={`${
-          openSidebar ? "w-6 h-6" : "w-5 h-5"
-        } flex-shrink-0 text-white`}
+        className={`${openSidebar ? "w-6 h-6" : "w-5 h-5"} shrink-0 ${
+          isActive ? "text-black" : "text-white"
+        }`}
       >
         {item.icon}
       </div>
 
-      {/* ✅ Sidebar label animation remains the same */}
       <motion.span
         animate={{
           opacity: openSidebar ? 0 : 1,
@@ -49,9 +47,7 @@ const SidebarItem = ({ item, openSidebar, setOpenSidebar }) => {
           marginLeft: openSidebar ? 0 : 8,
         }}
         transition={{ duration: 0.1 }}
-        className={`dashboard-sidebar-text text-xl font-900 whitespace-nowrap overflow-hidden ${
-          isActive ? "text-white" : "text-gray-200"
-        }`}
+        className={`text-lg font-semibold whitespace-nowrap overflow-hidden`}
       >
         {item.label}
       </motion.span>

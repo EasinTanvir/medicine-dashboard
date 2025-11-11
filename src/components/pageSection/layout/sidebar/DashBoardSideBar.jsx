@@ -6,57 +6,10 @@ import { Button } from "@/components/ui/Button";
 import { inter } from "@/libs/fonts";
 import { useDashboardContext } from "@/providers/DashboardContextProvider";
 import { motion } from "framer-motion";
-
-import {
-  MdDashboard,
-  MdOutlinePostAdd,
-  MdManageAccounts,
-  MdReportGmailerrorred,
-  MdAdsClick,
-  MdOutlineEditNote,
-  MdKeyboardDoubleArrowLeft,
-} from "react-icons/md";
+import { MdKeyboardDoubleArrowLeft, MdLocalPharmacy } from "react-icons/md";
+import { sidebarItems } from "@/libs/sidebarLinks";
 
 const DashBoardSideBar = () => {
-  const sidebarItems = [
-    {
-      key: "dashboard",
-      label: "Dashboard",
-      href: "/",
-      icon: <MdDashboard className="w-6 h-6" />,
-    },
-    {
-      key: "editor",
-      label: "Editor",
-      href: "/dashboard/editor",
-      icon: <MdOutlineEditNote className="w-6 h-6" />,
-    },
-    {
-      key: "admin-post",
-      label: "Admin Post",
-      href: "/dashboard/admin-post",
-      icon: <MdOutlinePostAdd className="w-6 h-6" />,
-    },
-    {
-      key: "manage-role",
-      label: "Manage Role",
-      href: "/dashboard/manage-role",
-      icon: <MdManageAccounts className="w-6 h-6" />,
-    },
-    {
-      key: "reports",
-      label: "Reports",
-      href: "/dashboard/reports",
-      icon: <MdReportGmailerrorred className="w-6 h-6" />,
-    },
-    {
-      key: "ads-manager",
-      label: "Ads-Manager",
-      href: "/dashboard/ads-manager",
-      icon: <MdAdsClick className="w-6 h-6" />,
-    },
-  ];
-
   const { openSidebar, setOpenSidebar } = useDashboardContext();
 
   useEffect(() => {
@@ -73,11 +26,30 @@ const DashBoardSideBar = () => {
       initial={false}
       animate={{ width: openSidebar ? "4rem" : "17rem" }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className={`bg-black z-40 shadow-dashboard-sidebar ${
+      className={`bg-black text-white z-40 shadow-lg ${
         openSidebar ? "px-2" : "sm:px-3.5 px-2"
       } sm:pt-[85px] pt-[75px] pb-20 scrollbar-hide rounded-t-sm rounded-b-sm min-h-screen max-h-screen overflow-y-auto fixed top-0 left-0 overflow-hidden`}
     >
-      <div className="space-y-3 ">
+      {/* ✅ Brand Section */}
+      <div
+        className={`flex items-center justify-center mb-8 transition-all duration-300 ${
+          openSidebar ? "flex-col gap-2" : "gap-3 px-3"
+        }`}
+      >
+        <MdLocalPharmacy className="text-green-400 w-8 h-8" />
+        {!openSidebar && (
+          <motion.h1
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-2xl font-bold tracking-wide"
+          >
+            Pharmacy
+          </motion.h1>
+        )}
+      </div>
+
+      {/* ✅ Sidebar Items */}
+      <div className="space-y-3">
         {sidebarItems.map((item) => (
           <SidebarItem
             key={item.key}
@@ -88,9 +60,10 @@ const DashBoardSideBar = () => {
         ))}
       </div>
 
+      {/* ✅ Collapse Button */}
       <Button
         onClick={() => setOpenSidebar(!openSidebar)}
-        className={`bg-dashboard-sidebar-inactive-bg border border-[#cdb920] rounded-sm flex items-center mt-14 w-full 
+        className={`bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-sm flex items-center mt-14 w-full 
           ${openSidebar ? "justify-center py-3" : "justify-start px-4 py-5"} 
           ${inter.className}`}
       >
@@ -106,7 +79,7 @@ const DashBoardSideBar = () => {
             marginLeft: openSidebar ? 0 : 12,
           }}
           transition={{ duration: 0.25 }}
-          className="dashboard-sidebar-text text-xl font-900 whitespace-nowrap overflow-hidden"
+          className="text-xl font-900 whitespace-nowrap overflow-hidden"
         >
           Collapse
         </motion.span>
