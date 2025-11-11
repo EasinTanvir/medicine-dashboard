@@ -159,7 +159,7 @@ const AddCustomerForm = () => {
               {/* Brand */}
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">
-                  Brand (optional)
+                  Company (optional)
                 </label>
                 <input
                   type="text"
