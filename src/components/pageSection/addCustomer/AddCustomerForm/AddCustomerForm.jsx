@@ -1,6 +1,6 @@
 "use client";
 
-import { companies } from "@/libs/companies";
+import { companies } from "@/dummydata";
 import React from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { MdPersonAddAlt1 } from "react-icons/md";
