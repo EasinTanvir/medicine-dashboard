@@ -8,7 +8,7 @@ const CustomersCard = ({ data }) => {
   return (
     <div className="relative p-6 bg-white rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition duration-300 flex flex-col justify-between overflow-hidden">
       {/* 🔵 Gradient Accent Bars */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-t-2xl"></div>
+      <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-blue-500 to-indigo-600 rounded-t-2xl"></div>
 
       {/* Header */}
       <div className="flex items-center justify-between mt-2">
@@ -39,7 +39,7 @@ const CustomersCard = ({ data }) => {
       </div>
 
       {/* Bottom Border */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-600 to-blue-500 rounded-b-2xl"></div>
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-indigo-600 to-blue-500 rounded-b-2xl"></div>
     </div>
   );
 };
