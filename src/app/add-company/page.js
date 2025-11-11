@@ -1,7 +1,12 @@
+import AddCompanyForm from "@/components/pageSection/addCompany/AddCompanyForm";
 import React from "react";
 
 const AddCompany = () => {
-  return <div>AddCompany</div>;
+  return (
+    <div>
+      <AddCompanyForm />
+    </div>
+  );
 };
 
 export default AddCompany;

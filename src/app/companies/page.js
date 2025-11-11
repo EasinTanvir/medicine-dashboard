@@ -1,7 +1,12 @@
+import Companies from "@/components/pageSection/companies/Companies";
 import React from "react";
 
-const Companies = () => {
-  return <div>Companies</div>;
+const CompanyPage = () => {
+  return (
+    <div>
+      <Companies />
+    </div>
+  );
 };
 
-export default Companies;
+export default CompanyPage;
