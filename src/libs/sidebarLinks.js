@@ -14,23 +14,18 @@ export const sidebarItems = [
     icon: <MdDashboard className="w-6 h-6" />,
   },
   {
-    key: "customer",
-    label: "Customer",
-    href: "/customer",
+    key: "customers",
+    label: "Customers",
+    href: "/customers",
     icon: <MdPeopleOutline className="w-6 h-6" />,
   },
   {
-    key: "medicine",
-    label: "Medicine",
-    href: "/medicine",
+    key: "medicines",
+    label: "Medicines",
+    href: "/medicines",
     icon: <MdOutlineLocalPharmacy className="w-6 h-6" />,
   },
-  {
-    key: "inventory",
-    label: "Inventory",
-    href: "/inventory",
-    icon: <MdOutlineInventory2 className="w-6 h-6" />,
-  },
+
   {
     key: "sells",
     label: "Sales",

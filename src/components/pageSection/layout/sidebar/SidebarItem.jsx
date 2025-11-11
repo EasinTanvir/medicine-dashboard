@@ -8,10 +8,11 @@ import { usePathname } from "next/navigation";
 const SidebarItem = ({ item, openSidebar, setOpenSidebar }) => {
   const pathname = usePathname();
 
+  // ✅ Fixed logic:
   const isActive =
-    item.href === "/dashboard"
-      ? pathname === "/dashboard"
-      : pathname.startsWith(item.href);
+    item.href === "/"
+      ? pathname === "/" // exact match only for dashboard root
+      : pathname.startsWith(item.href); // prefix match for others
 
   const handleClick = () => {
     if (window.innerWidth < 1024) {
