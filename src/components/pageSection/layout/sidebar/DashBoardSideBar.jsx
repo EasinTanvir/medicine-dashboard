@@ -1,54 +1,59 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Image from "next/image";
 import SidebarItem from "./SidebarItem";
 import { Button } from "@/components/ui/Button";
 import { inter } from "@/libs/fonts";
-
 import { useDashboardContext } from "@/providers/DashboardContextProvider";
 import { motion } from "framer-motion";
 
-const DashBoardSideBar = () => {
-  let adminpost;
-  let adsmanager;
-  let back;
-  let dashboard;
-  let editor;
-  let report;
-  let role;
+import {
+  MdDashboard,
+  MdOutlinePostAdd,
+  MdManageAccounts,
+  MdReportGmailerrorred,
+  MdAdsClick,
+  MdOutlineEditNote,
+  MdKeyboardDoubleArrowLeft,
+} from "react-icons/md";
 
+const DashBoardSideBar = () => {
   const sidebarItems = [
     {
       key: "dashboard",
       label: "Dashboard",
-      href: "/dashboard",
-      icon: dashboard,
+      href: "/",
+      icon: <MdDashboard className="w-6 h-6" />,
     },
-    { key: "editor", label: "Editor", href: "/dashboard/editor", icon: editor },
+    {
+      key: "editor",
+      label: "Editor",
+      href: "/dashboard/editor",
+      icon: <MdOutlineEditNote className="w-6 h-6" />,
+    },
     {
       key: "admin-post",
       label: "Admin Post",
       href: "/dashboard/admin-post",
-      icon: adminpost,
+      icon: <MdOutlinePostAdd className="w-6 h-6" />,
     },
     {
       key: "manage-role",
       label: "Manage Role",
       href: "/dashboard/manage-role",
-      icon: role,
+      icon: <MdManageAccounts className="w-6 h-6" />,
     },
     {
       key: "reports",
       label: "Reports",
       href: "/dashboard/reports",
-      icon: report,
+      icon: <MdReportGmailerrorred className="w-6 h-6" />,
     },
     {
       key: "ads-manager",
       label: "Ads-Manager",
       href: "/dashboard/ads-manager",
-      icon: adsmanager,
+      icon: <MdAdsClick className="w-6 h-6" />,
     },
   ];
 
@@ -56,25 +61,21 @@ const DashBoardSideBar = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 1024) {
-        setOpenSidebar(true);
-      } else {
-        setOpenSidebar(false);
-      }
+      setOpenSidebar(window.innerWidth < 1024);
     };
-
-    handleResize(); // run once on mount
+    handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [setOpenSidebar]);
+
   return (
     <motion.div
       initial={false}
       animate={{ width: openSidebar ? "4rem" : "17rem" }}
       transition={{ duration: 0.3, ease: "easeInOut" }}
-      className={`bg-dashboard-sidebar-bg z-40   shadow-dashboard-sidebar ${
+      className={`bg-black z-40 shadow-dashboard-sidebar ${
         openSidebar ? "px-2" : "sm:px-3.5 px-2"
-      }  sm:pt-[85px] pt-[75px] pb-20  scrollbar-hide rounded-t-sm rounded-b-sm min-h-screen max-h-screen overflow-y-auto fixed top-0  left-0  overflow-hidden`}
+      } sm:pt-[85px] pt-[75px] pb-20 scrollbar-hide rounded-t-sm rounded-b-sm min-h-screen max-h-screen overflow-y-auto fixed top-0 left-0 overflow-hidden`}
     >
       <div className="space-y-3 ">
         {sidebarItems.map((item) => (
@@ -93,15 +94,11 @@ const DashBoardSideBar = () => {
           ${openSidebar ? "justify-center py-3" : "justify-start px-4 py-5"} 
           ${inter.className}`}
       >
-        <Image
-          src={back}
-          alt="collapse"
-          className={`w-5 h-5 object-contain transition-transform duration-300 ${
+        <MdKeyboardDoubleArrowLeft
+          className={`w-6 h-6 transition-transform duration-300 ${
             openSidebar ? "rotate-180" : "rotate-0"
           }`}
         />
-
-        {/* Always rendered, just animate opacity/width */}
         <motion.span
           animate={{
             opacity: openSidebar ? 0 : 1,
