@@ -1,4 +1,5 @@
 import Sales from "@/components/pageSection/sales/Sales";
+import DeleteAll from "@/components/shared/DeleteAll";
 import { BASE_URL } from "@/libs/baseUrl";
 import { CACHING_TIME } from "@/libs/cacheTime";
 import { fetchData } from "@/libs/fetchHelper";
@@ -17,6 +18,14 @@ const SalesPage = async () => {
   return (
     <div>
       <Sales allCompanies={allCompanies} allSales={allSales.sales || []} />
+
+      {allCompanies?.length > 0 && (
+        <DeleteAll
+          endpoint="/api/sells/resetall"
+          title="Reset All Sells"
+          tag="sells"
+        />
+      )}
     </div>
   );
 };

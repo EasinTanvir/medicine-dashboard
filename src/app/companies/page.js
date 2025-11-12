@@ -1,4 +1,5 @@
 import Companies from "@/components/pageSection/companies/Companies";
+import DeleteAll from "@/components/shared/DeleteAll";
 import { BASE_URL } from "@/libs/baseUrl";
 import { CACHING_TIME } from "@/libs/cacheTime";
 import { fetchData } from "@/libs/fetchHelper";
@@ -12,6 +13,14 @@ const CompanyPage = async () => {
   return (
     <div>
       <Companies allCompanies={allCompanies} />
+
+      {allCompanies?.length > 0 && (
+        <DeleteAll
+          endpoint="/api/company/resetall"
+          title="Reset All Companies"
+          tag="company"
+        />
+      )}
     </div>
   );
 };
