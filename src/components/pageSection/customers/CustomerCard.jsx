@@ -2,28 +2,34 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { MdCall, MdLocationOn, MdDelete } from "react-icons/md";
-import { FaCheckCircle } from "react-icons/fa";
+import { MdCall, MdLocationOn, MdDelete, MdEdit } from "react-icons/md";
+import { FaCheckCircle, FaPills } from "react-icons/fa";
 import BaseModal from "@/components/shared/BaseModal";
+import ConfirmAction from "@/components/shared/ConfirmAction";
 import api from "@/libs/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
-import ConfirmAction from "@/components/shared/ConfirmAction";
+import CustomerForm from "./CustomerForm";
 
-const CustomerCard = ({ customer }) => {
+const CustomerCard = ({ customer, allCompanies }) => {
   const [loading, setLoading] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
+
   const router = useRouter();
 
   const handleStatusUpdate = async () => {
     try {
       setLoading(true);
-      await api.put("/api/customer", { id: customer.id, status: "done" });
+      await api.put("/api/customer/status", {
+        id: customer.id,
+        status: "done",
+      });
       toast.success(`${customer.customerName} marked as done ✅`);
       setStatusModal(false);
       router.refresh();
-    } catch (err) {
+    } catch {
       toast.error("Failed to update status");
     } finally {
       setLoading(false);
@@ -37,7 +43,7 @@ const CustomerCard = ({ customer }) => {
       toast.success(`Deleted ${customer.customerName}`);
       setDeleteModal(false);
       router.refresh();
-    } catch (err) {
+    } catch {
       toast.error("Failed to delete customer");
     } finally {
       setLoading(false);
@@ -51,6 +57,7 @@ const CustomerCard = ({ customer }) => {
         customer.status === "done" ? "border-green-400" : "border-yellow-300"
       }`}
     >
+      {/* Header */}
       <div className="flex justify-between items-center mb-3">
         <h3 className="text-lg font-semibold text-gray-800">
           {customer.customerName}
@@ -66,6 +73,7 @@ const CustomerCard = ({ customer }) => {
         </span>
       </div>
 
+      {/* Info */}
       <p className="text-sm text-gray-600 mb-2">
         <MdCall className="inline mr-1 text-blue-600" />
         {customer.customerPhone || "No phone provided"}
@@ -75,7 +83,43 @@ const CustomerCard = ({ customer }) => {
         {customer.customerAddress || "No address provided"}
       </p>
 
+      {/* Medicines */}
+      <div className="mt-4 border-t pt-3">
+        <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+          <FaPills className="text-green-500" /> Medicines
+        </h4>
+        {customer.medicines.length > 0 ? (
+          <ul className="space-y-2">
+            {customer.medicines.map((m) => (
+              <li
+                key={m.id}
+                className="flex justify-between items-center bg-gray-50 p-2 rounded-md text-sm"
+              >
+                <div>
+                  <p className="font-medium text-gray-800">{m.medicineName}</p>
+                  <p className="text-xs text-gray-500">
+                    Qty: {m.quantity} | {m.company?.companyName || "No company"}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-gray-500 italic mt-2">
+            No medicines added.
+          </p>
+        )}
+      </div>
+
+      {/* Buttons */}
       <div className="mt-4 flex justify-between items-center">
+        <button
+          onClick={() => setEditModal(true)}
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200"
+        >
+          <MdEdit /> Edit
+        </button>
+
         <button
           onClick={() => setStatusModal(true)}
           disabled={customer.status === "done"}
@@ -97,7 +141,7 @@ const CustomerCard = ({ customer }) => {
         </button>
       </div>
 
-      {/* ✅ Status Modal */}
+      {/* Modals */}
       <BaseModal isOpen={statusModal} onClose={() => setStatusModal(false)}>
         <ConfirmAction
           title="Mark Customer as Done"
@@ -112,13 +156,25 @@ const CustomerCard = ({ customer }) => {
 
       <BaseModal isOpen={deleteModal} onClose={() => setDeleteModal(false)}>
         <ConfirmAction
-          title="Delete Confirmation"
-          message={`Are you sure you want to delete "${customer.customerName}"? This action cannot be undone.`}
+          title="Delete Customer"
+          message={`Are you sure you want to delete "${customer.customerName}"?`}
           confirmText="Yes, Delete"
           confirmColor="red"
           onClose={() => setDeleteModal(false)}
           onConfirm={handleDelete}
           loading={loading}
+        />
+      </BaseModal>
+
+      <BaseModal
+        maxWidth="w-[650px]"
+        isOpen={editModal}
+        onClose={() => setEditModal(false)}
+      >
+        <CustomerForm
+          allCompanies={allCompanies}
+          existingCustomer={customer}
+          onClose={() => setEditModal(false)}
         />
       </BaseModal>
     </motion.div>

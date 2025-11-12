@@ -8,10 +8,13 @@ const CustomersPage = async () => {
     cache: "no-store",
     next: { tags: ["customer"] },
   });
-  console.log("allCustomers", allCustomers);
+  const allCompanies = await fetchData(`${BASE_URL}/api/company`, {
+    cache: "force-cache",
+    next: { tags: ["company"] },
+  });
   return (
     <div>
-      <Customers allCustomers={allCustomers} />
+      <Customers allCustomers={allCustomers} allCompanies={allCompanies} />
     </div>
   );
 };

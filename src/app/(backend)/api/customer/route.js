@@ -70,25 +70,67 @@ export async function GET() {
 // ✅ Update customer status
 export async function PUT(req) {
   try {
-    const { id, status } = await req.json();
-    if (!id || !status)
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    const { id, customerName, customerPhone, customerAddress, medicines } =
+      await req.json();
 
-    const updated = await prisma.customer.update({
+    // 🧾 Basic validation
+    if (!id || !customerName) {
+      return NextResponse.json(
+        { error: "Customer ID and name are required" },
+        { status: 400 }
+      );
+    }
+
+    // 🧠 Step 1: Update customer base info
+    const customerExists = await prisma.customer.findUnique({
       where: { id },
-      data: { status },
+      include: { medicines: true },
     });
+
+    if (!customerExists) {
+      return NextResponse.json(
+        { error: "Customer not found" },
+        { status: 404 }
+      );
+    }
+
+    // 🧹 Step 2: Remove all existing medicines for that customer
+    await prisma.customerMedicine.deleteMany({
+      where: { customerId: id },
+    });
+
+    // 🧩 Step 3: Recreate all medicines with the new data
+    const updatedCustomer = await prisma.customer.update({
+      where: { id },
+      data: {
+        customerName,
+        customerPhone,
+        customerAddress,
+        medicines: {
+          create: medicines.map((m) => ({
+            medicineName: m.medicineName,
+            quantity: Number(m.quantity) || 1,
+            companyId: m.companyId || null,
+          })),
+        },
+      },
+      include: {
+        medicines: { include: { company: true } },
+      },
+    });
+
+    // 🧭 Step 4: Revalidate tag
     revalidateTag("customer");
-    return NextResponse.json(updated, { status: 200 });
+
+    return NextResponse.json(updatedCustomer, { status: 200 });
   } catch (error) {
-    console.error("❌ Error updating status:", error);
+    console.error("❌ Error updating customer:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
     );
   }
 }
-
 // ✅ Delete customer
 export async function DELETE(req) {
   try {

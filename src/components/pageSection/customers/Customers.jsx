@@ -3,7 +3,7 @@
 import React, { useMemo, useState } from "react";
 import CustomerCard from "./CustomerCard";
 
-const Customers = ({ allCustomers }) => {
+const Customers = ({ allCustomers, allCompanies }) => {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -22,10 +22,40 @@ const Customers = ({ allCustomers }) => {
     });
   }, [query, allCustomers]);
 
+  // 🟢 Summary stats
+  const totalMedicines = allCustomers.reduce(
+    (acc, c) => acc + c.medicines.length,
+    0
+  );
+  const pendingCustomers = allCustomers.filter(
+    (c) => c.status === "pending"
+  ).length;
+
   return (
     <div className="p-6">
       <h1 className="text-2xl font-semibold mb-4">Customers</h1>
 
+      {/* ✅ Summary cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+          <h3 className="text-sm text-gray-600">Total Customers</h3>
+          <p className="text-2xl font-bold text-blue-700">
+            {allCustomers.length}
+          </p>
+        </div>
+        <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-4">
+          <h3 className="text-sm text-gray-600">Pending Customers</h3>
+          <p className="text-2xl font-bold text-yellow-700">
+            {pendingCustomers}
+          </p>
+        </div>
+        <div className="bg-green-50 border border-green-100 rounded-xl p-4">
+          <h3 className="text-sm text-gray-600">Total Medicines</h3>
+          <p className="text-2xl font-bold text-green-700">{totalMedicines}</p>
+        </div>
+      </div>
+
+      {/* Search */}
       <div className="mb-6 flex gap-3 items-center">
         <input
           value={query}
@@ -38,9 +68,10 @@ const Customers = ({ allCustomers }) => {
         </button>
       </div>
 
+      {/* Customer Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filtered.map((c) => (
-          <CustomerCard key={c.id} customer={c} />
+          <CustomerCard key={c.id} customer={c} allCompanies={allCompanies} />
         ))}
       </div>
 
