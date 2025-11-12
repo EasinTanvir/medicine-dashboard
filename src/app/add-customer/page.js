@@ -8,7 +8,7 @@ const CustomersPage = async () => {
     cache: "force-cache",
     next: { tags: ["company"] },
   });
-  console.log("allCompanies", allCompanies);
+
   return (
     <div className="pt-20">
       <AddCustomer allCompanies={allCompanies} />

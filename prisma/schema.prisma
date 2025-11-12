@@ -13,9 +13,11 @@ model Customer {
   customerName    String
   customerPhone   String?
   customerAddress String?
+  status          String              @default("pending") // ✅ Added
   medicines       CustomerMedicine[]
   createdAt       DateTime            @default(now())
 }
+
 
 model CustomerMedicine {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId

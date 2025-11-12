@@ -3,10 +3,11 @@
 import React, { useMemo, useState } from "react";
 import { MdOutlineBusiness, MdPerson, MdCall, MdDelete } from "react-icons/md";
 import BaseModal from "@/components/shared/BaseModal";
-import DeleteConfirm from "./DeleteConfirm";
+
 import api from "@/libs/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import ConfirmAction from "@/components/shared/ConfirmAction";
 
 const Companies = ({ allCompanies = [] }) => {
   const [query, setQuery] = useState("");
@@ -130,8 +131,11 @@ const Companies = ({ allCompanies = [] }) => {
 
       {/* 🔥 Dynamic Modal with Custom Content */}
       <BaseModal isOpen={showModal} onClose={() => setShowModal(false)}>
-        <DeleteConfirm
-          name={selectedCompany?.companyName}
+        <ConfirmAction
+          title="Delete Confirmation"
+          message={`Are you sure you want to delete? This action cannot be undone.`}
+          confirmText="Yes, Delete"
+          confirmColor="red"
           onClose={() => setShowModal(false)}
           onConfirm={handleDelete}
           loading={loading}

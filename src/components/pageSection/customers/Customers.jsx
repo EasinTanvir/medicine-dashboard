@@ -1,29 +1,26 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-
 import CustomerCard from "./CustomerCard";
-import { customers } from "@/dummydata";
 
-const Customers = () => {
+const Customers = ({ allCustomers }) => {
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return customers;
+    if (!q) return allCustomers;
 
-    return customers.filter((c) => {
+    return allCustomers.filter((c) => {
       const nameMatch = c.customerName.toLowerCase().includes(q);
       const phoneMatch = (c.customerPhone || "").toLowerCase().includes(q);
-      // check any medicine brandName or medicineName
-      const companyMatch = c.medicines.some(
+      const medicineMatch = c.medicines.some(
         (m) =>
-          (m.brandName || "").toLowerCase().includes(q) ||
-          (m.medicineName || "").toLowerCase().includes(q)
+          (m.medicineName || "").toLowerCase().includes(q) ||
+          (m.company?.companyName || "").toLowerCase().includes(q)
       );
-      return nameMatch || phoneMatch || companyMatch;
+      return nameMatch || phoneMatch || medicineMatch;
     });
-  }, [query]);
+  }, [query, allCustomers]);
 
   return (
     <div className="p-6">
@@ -33,7 +30,7 @@ const Customers = () => {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name, phone or company..."
+          placeholder="Search by name, phone or medicine..."
           className="w-full max-w-lg border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button onClick={() => setQuery("")} className="text-sm text-gray-600">
@@ -48,7 +45,9 @@ const Customers = () => {
       </div>
 
       {filtered.length === 0 && (
-        <p className="text-gray-500 mt-6">No customers matched your search.</p>
+        <p className="text-gray-500 mt-6 text-center">
+          No customers matched your search.
+        </p>
       )}
     </div>
   );

@@ -2,30 +2,55 @@
 
 import React from "react";
 
-const DeleteConfirm = ({ name, onClose, onConfirm, loading }) => {
+const ConfirmAction = ({
+  title = "Are you sure?",
+  message,
+  name,
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  onClose,
+  onConfirm,
+  loading,
+  confirmColor = "red",
+}) => {
+  const colorClasses = {
+    red: "bg-red-600 hover:bg-red-700",
+    green: "bg-green-600 hover:bg-green-700",
+    blue: "bg-blue-600 hover:bg-blue-700",
+    yellow: "bg-yellow-500 hover:bg-yellow-600",
+  };
+
+  const confirmBtnClass = colorClasses[confirmColor] || colorClasses.red;
+
   return (
     <div className="text-center">
-      <h2 className="text-lg font-semibold text-gray-800 mb-2">
-        Delete Confirmation
-      </h2>
-      <p className="text-sm text-gray-600 mb-6">
-        Are you sure you want to delete{" "}
-        <span className="font-medium text-red-600">"{name}"</span>? <br />
-        This action cannot be undone.
-      </p>
+      {/* Title */}
+      <h2 className="text-lg font-semibold text-gray-800 mb-2">{title}</h2>
 
+      {/* Message */}
+      {message ? (
+        <p className="text-sm text-gray-600 mb-6">{message}</p>
+      ) : (
+        <p className="text-sm text-gray-600 mb-6">
+          Are you sure you want to perform this action on{" "}
+          <span className="font-medium text-red-600">"{name}"</span>?
+        </p>
+      )}
+
+      {/* Buttons */}
       <div className="flex justify-center gap-3">
         <button
           onClick={onClose}
           disabled={loading}
           className="px-4 py-2 text-sm rounded-md border border-gray-300 hover:bg-gray-100 transition disabled:opacity-50"
         >
-          Cancel
+          {cancelText}
         </button>
+
         <button
           onClick={onConfirm}
           disabled={loading}
-          className="px-4 py-2 text-sm rounded-md bg-red-600 text-white hover:bg-red-700 transition flex items-center justify-center disabled:opacity-50"
+          className={`px-4 py-2 text-sm rounded-md text-white transition flex items-center justify-center disabled:opacity-50 ${confirmBtnClass}`}
         >
           {loading ? (
             <svg
@@ -49,11 +74,11 @@ const DeleteConfirm = ({ name, onClose, onConfirm, loading }) => {
               ></path>
             </svg>
           ) : null}
-          {loading ? "Deleting..." : "Yes, Delete"}
+          {loading ? "Processing..." : confirmText}
         </button>
       </div>
     </div>
   );
 };
 
-export default DeleteConfirm;
+export default ConfirmAction;
