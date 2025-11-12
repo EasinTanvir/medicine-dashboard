@@ -5,7 +5,7 @@ import CustomerCard from "./CustomerCard";
 
 const Customers = ({ allCustomers, allCompanies }) => {
   const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all"); // default: pending
+  const [statusFilter, setStatusFilter] = useState("pending"); // default: pending
 
   // 🧠 Filter logic: by search query + status
   const filtered = useMemo(() => {
@@ -101,8 +101,8 @@ const Customers = ({ allCustomers, allCompanies }) => {
       </div>
 
       {filtered.length === 0 && (
-        <p className="text-gray-500 mt-6 text-center">
-          No customers matched your search.
+        <p className="text-white rounded-4xl mt-6 text-center bg-red-800 py-10  w-fit mx-auto px-10">
+          No Customer Found Under This Category
         </p>
       )}
     </div>

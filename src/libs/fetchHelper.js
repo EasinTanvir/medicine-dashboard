@@ -5,7 +5,7 @@ export async function fetchData(endpoint, options = {}) {
       headers: {
         "Content-Type": "application/json",
       },
-      cache: options.cache || "no-store",
+      cache: options.cache,
       next: { ...options.next },
     });
 

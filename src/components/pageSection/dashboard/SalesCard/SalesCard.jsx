@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { MdPointOfSale } from "react-icons/md";
 
@@ -12,7 +13,10 @@ const SalesCard = ({ data = [] }) => {
   ).size;
 
   return (
-    <div className="relative p-6 bg-white rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition duration-300 flex flex-col justify-between overflow-hidden">
+    <Link
+      href="/sells"
+      className="relative p-6 bg-white rounded-2xl shadow-md border border-gray-100 hover:shadow-lg transition duration-300 flex flex-col justify-between overflow-hidden"
+    >
       {/* Gradient Accent Bar */}
       <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-pink-500 to-rose-600 rounded-t-2xl"></div>
 
@@ -50,7 +54,7 @@ const SalesCard = ({ data = [] }) => {
 
       {/* Bottom Border */}
       <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-rose-600 to-pink-500 rounded-b-2xl"></div>
-    </div>
+    </Link>
   );
 };
 
