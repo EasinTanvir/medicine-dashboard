@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import CustomerCard from "./CustomerCard";
 import EmptyState from "@/components/shared/EmptyState";
 import { MdSearchOff } from "react-icons/md";
+import Link from "next/link";
 
 const Customers = ({ allCustomers, allCompanies }) => {
   const [query, setQuery] = useState("");
@@ -102,7 +103,7 @@ const Customers = ({ allCustomers, allCompanies }) => {
         ))}
       </div>
 
-      <div className="pt-16">
+      <div className="pt-16 space-y-10">
         {filtered.length === 0 && (
           <EmptyState
             title="No Customer Found Under This Category"
@@ -110,6 +111,15 @@ const Customers = ({ allCustomers, allCompanies }) => {
             color="red"
           />
         )}
+
+        <div className=" flex justify-center">
+          <Link
+            className="bg-black text-white rounded-2xl py-2 px-10"
+            href="/add-customer"
+          >
+            Add Customer
+          </Link>
+        </div>
       </div>
     </div>
   );

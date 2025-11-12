@@ -13,6 +13,7 @@ import MedicineEditForm from "./MedicineEditForm";
 import api from "@/libs/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import EmptyState from "@/components/shared/EmptyState";
 
 const Medicines = ({ allMedicines, companies }) => {
   const [selectedCompany, setSelectedCompany] = useState("");
@@ -201,18 +202,20 @@ const Medicines = ({ allMedicines, companies }) => {
               <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-emerald-600 to-green-500 rounded-b-xl"></div>
             </div>
           ))}
+          <div className="mt-10 p-5 border-t border-gray-100 flex justify-between items-center bg-green-50 rounded-xl">
+            <p className="text-lg font-semibold text-gray-800">Grand Total:</p>
+            <p className="text-2xl font-bold text-green-700">
+              ৳ {grandTotal.toFixed(2)}
+            </p>
+          </div>
         </div>
       ) : (
-        <p className="text-gray-500 mt-4 text-center">No medicines found.</p>
+        <div className="pt-16 space-y-10">
+          <EmptyState title="No Medicine Found" color="red" />
+        </div>
       )}
 
       {/* Grand Total */}
-      <div className="mt-10 p-5 border-t border-gray-100 flex justify-between items-center bg-green-50 rounded-xl">
-        <p className="text-lg font-semibold text-gray-800">Grand Total:</p>
-        <p className="text-2xl font-bold text-green-700">
-          ৳ {grandTotal.toFixed(2)}
-        </p>
-      </div>
 
       {/* Delete Modal */}
       <BaseModal isOpen={deleteModal} onClose={() => setDeleteModal(false)}>
