@@ -1,4 +1,5 @@
 import Medicines from "@/components/pageSection/medicines/Medicines";
+import DeleteAll from "@/components/shared/DeleteAll";
 import { BASE_URL } from "@/libs/baseUrl";
 import { CACHING_TIME } from "@/libs/cacheTime";
 import { fetchData } from "@/libs/fetchHelper";
@@ -16,6 +17,14 @@ const MedicinePage = async () => {
   return (
     <div>
       <Medicines allMedicines={allMedicines} companies={allCompanies} />
+
+      {allMedicines?.length > 0 && (
+        <DeleteAll
+          endpoint="/api/medicine/resetall"
+          title="Reset All Medicines"
+          tag="medicine"
+        />
+      )}
     </div>
   );
 };
