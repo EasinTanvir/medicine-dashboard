@@ -31,7 +31,7 @@ const CompanyCard = ({ data }) => {
           <p className="text-4xl font-bold text-gray-900">{total}</p>
           <p className="text-gray-500 text-sm">Total Companies</p>
         </div>
-
+        {/* 
         <div className="flex flex-col items-center">
           <span className="text-sm font-medium text-gray-600 mb-1">
             Pending
@@ -39,7 +39,7 @@ const CompanyCard = ({ data }) => {
           <div className="px-4 py-2 rounded-full bg-purple-50 text-purple-700 font-semibold text-lg shadow-sm border border-purple-200">
             {pending}
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Bottom Border */}
