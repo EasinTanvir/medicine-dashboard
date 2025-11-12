@@ -5,8 +5,10 @@ import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { MdPointOfSale } from "react-icons/md";
 import toast from "react-hot-toast";
 import api from "@/libs/api";
+import { useRouter } from "next/navigation";
 
 const AddSalesForm = ({ allCompanies }) => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -59,6 +61,7 @@ const AddSalesForm = ({ allCompanies }) => {
       if (res.status === 201) {
         toast.success("✅ Sales recorded successfully!");
         reset();
+        router.refresh();
       }
     } catch (error) {
       console.error("❌ Error recording sales:", error);

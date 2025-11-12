@@ -1,4 +1,5 @@
 import { prisma } from "@/libs/prismaCli";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
@@ -39,6 +40,8 @@ export async function POST(req) {
         companyId: s.companyId || null,
       })),
     });
+
+    revalidateTag("sales");
 
     return NextResponse.json(
       { message: "Sales recorded successfully", count: created.count },
