@@ -52,3 +52,30 @@ export async function GET() {
     );
   }
 }
+// 🔴 Delete a company by ID
+export async function DELETE(req) {
+  try {
+    const { id } = await req.json();
+    if (!id) {
+      return NextResponse.json(
+        { error: "Company ID is required" },
+        { status: 400 }
+      );
+    }
+
+    await prisma.company.delete({
+      where: { id },
+    });
+    revalidateTag("company");
+    return NextResponse.json(
+      { message: "Company deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("❌ Error deleting company:", error);
+    return NextResponse.json(
+      { error: "Failed to delete company" },
+      { status: 500 }
+    );
+  }
+}

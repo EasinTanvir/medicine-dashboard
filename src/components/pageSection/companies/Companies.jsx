@@ -1,15 +1,22 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { MdOutlineBusiness, MdPerson, MdCall } from "react-icons/md";
+import { MdOutlineBusiness, MdPerson, MdCall, MdDelete } from "react-icons/md";
+import BaseModal from "@/components/shared/BaseModal";
+import DeleteConfirm from "./DeleteConfirm";
+import api from "@/libs/api";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const Companies = ({ allCompanies = [] }) => {
   const [query, setQuery] = useState("");
-
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const filteredCompanies = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return allCompanies;
-
     return allCompanies.filter(
       (c) =>
         c.companyName?.toLowerCase().includes(q) ||
@@ -17,6 +24,21 @@ const Companies = ({ allCompanies = [] }) => {
         c.representativePhone?.toLowerCase().includes(q)
     );
   }, [query, allCompanies]);
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await api.delete("/api/company", { data: { id: selectedCompany.id } });
+      toast.success(`"${selectedCompany.companyName}" deleted successfully`);
+      setShowModal(false);
+      router.refresh();
+    } catch (error) {
+      console.error("❌ Delete error:", error);
+      toast.error("Failed to delete company");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -28,7 +50,7 @@ const Companies = ({ allCompanies = [] }) => {
         </h2>
       </div>
 
-      {/* Search Input */}
+      {/* Search */}
       <div className="mb-8 flex items-center gap-3">
         <input
           type="text"
@@ -58,7 +80,18 @@ const Companies = ({ allCompanies = [] }) => {
               {/* Gradient bar */}
               <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-indigo-600 to-purple-500 rounded-t-xl"></div>
 
-              {/* Company Name */}
+              {/* Delete Button */}
+              <button
+                onClick={() => {
+                  setSelectedCompany(company);
+                  setShowModal(true);
+                }}
+                className="absolute top-3 right-3 text-red-500 hover:text-red-700 transition"
+              >
+                <MdDelete className="w-5 h-5" />
+              </button>
+
+              {/* Company Details */}
               <div className="mb-3">
                 <h3 className="text-lg font-semibold text-gray-800">
                   {company.companyName}
@@ -94,6 +127,16 @@ const Companies = ({ allCompanies = [] }) => {
           No companies found matching your search.
         </p>
       )}
+
+      {/* 🔥 Dynamic Modal with Custom Content */}
+      <BaseModal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <DeleteConfirm
+          name={selectedCompany?.companyName}
+          onClose={() => setShowModal(false)}
+          onConfirm={handleDelete}
+          loading={loading}
+        />
+      </BaseModal>
     </div>
   );
 };
