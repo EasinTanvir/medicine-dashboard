@@ -1,5 +1,5 @@
+import "dotenv/config";
 import { defineConfig, env } from "prisma/config";
-import { config } from "dotenv";
 export default defineConfig({
   schema: "prisma/schema.prisma",
   migrations: {
