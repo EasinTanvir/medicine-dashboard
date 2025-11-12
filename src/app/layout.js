@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import DashboardContextProvider from "@/providers/DashboardContextProvider";
 import DashBoardSideBarWrapper from "@/components/pageSection/layout/DashBoardSideBarWrapper";
-
+import { Toaster } from "react-hot-toast";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,6 +24,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <Toaster position="top-center" />
         <DashboardContextProvider>
           <DashBoardSideBarWrapper> {children}</DashBoardSideBarWrapper>
         </DashboardContextProvider>
