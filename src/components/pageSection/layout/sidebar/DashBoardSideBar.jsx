@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import SidebarItem from "./SidebarItem";
 import { Button } from "@/components/ui/Button";
-import { inter } from "@/libs/fonts";
+
 import { useDashboardContext } from "@/providers/DashboardContextProvider";
 import { motion } from "framer-motion";
 import { MdKeyboardDoubleArrowLeft, MdLocalPharmacy } from "react-icons/md";
@@ -65,7 +65,7 @@ const DashBoardSideBar = () => {
         onClick={() => setOpenSidebar(!openSidebar)}
         className={`bg-gray-800 hover:bg-gray-700 border border-gray-600 rounded-sm flex items-center mt-14 w-full 
           ${openSidebar ? "justify-center py-3" : "justify-start px-4 py-5"} 
-          ${inter.className}`}
+          `}
       >
         <MdKeyboardDoubleArrowLeft
           className={`w-6 h-6 transition-transform duration-300 ${

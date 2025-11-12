@@ -1,6 +1,5 @@
 "use client";
 
-import { inter } from "@/libs/fonts";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -31,7 +30,7 @@ const SidebarItem = ({ item, openSidebar, setOpenSidebar }) => {
             ? "bg-white text-black"
             : "bg-transparent hover:bg-gray-800 text-gray-300"
         }
-        ${inter.className}`}
+      `}
     >
       <div
         className={`${openSidebar ? "w-6 h-6" : "w-5 h-5"} shrink-0 ${
