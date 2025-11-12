@@ -52,26 +52,9 @@ export async function POST(req) {
     );
   }
 }
-export async function GET(req) {
+export async function GET() {
   try {
-    const { searchParams } = new URL(req.url);
-    const companyId = searchParams.get("companyId");
-    const startDate = searchParams.get("startDate");
-    const endDate = searchParams.get("endDate");
-
-    // Dynamic filter
-    const where = {};
-
-    if (companyId) where.companyId = companyId;
-    if (startDate && endDate) {
-      where.date = {
-        gte: new Date(startDate),
-        lte: new Date(endDate),
-      };
-    }
-
     const sales = await prisma.sale.findMany({
-      where,
       include: {
         company: {
           select: {
@@ -83,11 +66,6 @@ export async function GET(req) {
       orderBy: { date: "desc" },
     });
 
-    if (!sales.length) {
-      return NextResponse.json({ message: "No sales found" }, { status: 200 });
-    }
-
-    // Calculate totals
     const totalQuantity = sales.reduce((sum, s) => sum + s.quantity, 0);
     const totalValue = sales.reduce((sum, s) => sum + s.subTotal, 0);
 
