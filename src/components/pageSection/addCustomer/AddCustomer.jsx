@@ -1,10 +1,10 @@
 import React from "react";
 import AddCustomerForm from "./AddCustomerForm/AddCustomerForm";
 
-const AddCustomer = () => {
+const AddCustomer = ({ allCompanies }) => {
   return (
     <div>
-      <AddCustomerForm />
+      <AddCustomerForm allCompanies={allCompanies} />
     </div>
   );
 };

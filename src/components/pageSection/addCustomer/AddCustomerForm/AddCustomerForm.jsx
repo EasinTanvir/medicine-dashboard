@@ -1,13 +1,13 @@
 "use client";
 
-import { companies } from "@/dummydata";
 import React, { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { MdPersonAddAlt1 } from "react-icons/md";
-import api from "@/libs/api";
 import toast from "react-hot-toast";
 
-const AddCustomerForm = () => {
+import api from "@/libs/api";
+
+const AddCustomerForm = ({ allCompanies }) => {
   const {
     register,
     handleSubmit,
@@ -200,9 +200,9 @@ const AddCustomerForm = () => {
                   className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300 bg-white"
                 >
                   <option value="">Select company</option>
-                  {companies.map((company) => (
+                  {allCompanies?.map((company) => (
                     <option key={company.id} value={company.id}>
-                      {company.name}
+                      {company.companyName}
                     </option>
                   ))}
                 </select>
