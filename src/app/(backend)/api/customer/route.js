@@ -103,6 +103,7 @@ export async function PUT(req) {
     const updatedCustomer = await prisma.customer.update({
       where: { id },
       data: {
+        status: "pending",
         customerName,
         customerPhone,
         customerAddress,

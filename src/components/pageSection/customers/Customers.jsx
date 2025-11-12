@@ -5,12 +5,16 @@ import CustomerCard from "./CustomerCard";
 
 const Customers = ({ allCustomers, allCompanies }) => {
   const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all"); // default: pending
 
+  // 🧠 Filter logic: by search query + status
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return allCustomers;
 
     return allCustomers.filter((c) => {
+      const matchesStatus =
+        statusFilter === "all" ? true : c.status === statusFilter;
+
       const nameMatch = c.customerName.toLowerCase().includes(q);
       const phoneMatch = (c.customerPhone || "").toLowerCase().includes(q);
       const medicineMatch = c.medicines.some(
@@ -18,9 +22,10 @@ const Customers = ({ allCustomers, allCompanies }) => {
           (m.medicineName || "").toLowerCase().includes(q) ||
           (m.company?.companyName || "").toLowerCase().includes(q)
       );
-      return nameMatch || phoneMatch || medicineMatch;
+
+      return matchesStatus && (nameMatch || phoneMatch || medicineMatch);
     });
-  }, [query, allCustomers]);
+  }, [query, statusFilter, allCustomers]);
 
   // 🟢 Summary stats
   const totalMedicines = allCustomers.reduce(
@@ -55,15 +60,35 @@ const Customers = ({ allCustomers, allCompanies }) => {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="mb-6 flex gap-3 items-center">
+      {/* 🔍 Search + Filter Bar */}
+      <div className="mb-6 flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+        {/* Search */}
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by name, phone or medicine..."
-          className="w-full max-w-lg border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full sm:max-w-md border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <button onClick={() => setQuery("")} className="text-sm text-gray-600">
+
+        {/* Status Dropdown */}
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+        >
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="done">Done</option>
+        </select>
+
+        {/* Reset */}
+        <button
+          onClick={() => {
+            setQuery("");
+            setStatusFilter("pending");
+          }}
+          className="text-sm text-gray-600 hover:underline"
+        >
           Reset
         </button>
       </div>
