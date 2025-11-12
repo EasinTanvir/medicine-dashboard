@@ -51,6 +51,7 @@ model StockMedicine {
   companyId    String    @db.ObjectId
   company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdAt    DateTime  @default(now())
+  status       String    @default("pending")  // ✅ Added field
 }
 
 model Sale {

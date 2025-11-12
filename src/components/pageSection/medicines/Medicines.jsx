@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
-import { MdOutlineLocalPharmacy, MdEdit, MdDelete } from "react-icons/md";
+import React, { useMemo, useState } from "react";
+import {
+  MdOutlineLocalPharmacy,
+  MdEdit,
+  MdDelete,
+  MdDone,
+} from "react-icons/md";
 import BaseModal from "@/components/shared/BaseModal";
 import ConfirmAction from "@/components/shared/ConfirmAction";
+import MedicineEditForm from "./MedicineEditForm";
 import api from "@/libs/api";
 import toast from "react-hot-toast";
-import MedicineEditForm from "./MedicineEditForm";
 import { useRouter } from "next/navigation";
 
 const Medicines = ({ allMedicines, companies }) => {
@@ -16,7 +21,8 @@ const Medicines = ({ allMedicines, companies }) => {
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  // Filter by company if selected
+
+  // 🧩 Filter by company
   const filteredMedicines = useMemo(() => {
     if (!selectedCompany) return allMedicines;
     return allMedicines.filter((m) => m.company?.id === selectedCompany);
@@ -27,7 +33,7 @@ const Medicines = ({ allMedicines, companies }) => {
     0
   );
 
-  // 🗑️ Handle delete
+  // 🗑️ Delete
   const handleDelete = async () => {
     if (!selectedMedicine) return;
     try {
@@ -41,6 +47,34 @@ const Medicines = ({ allMedicines, companies }) => {
       toast.error("Failed to delete medicine");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ✅ Mark as Done
+  const handleMarkDone = async (medicine) => {
+    try {
+      setLoading(true);
+      await api.put("/api/medicine/status", {
+        id: medicine.id,
+        status: "done",
+      });
+      toast.success(`"${medicine.name}" marked as done ✅`);
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to update status");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🧩 Status color mapping
+  const getStatusClasses = (status) => {
+    switch (status) {
+      case "done":
+        return "border-green-400 bg-green-50";
+      case "pending":
+      default:
+        return "border-yellow-300 bg-yellow-50";
     }
   };
 
@@ -77,33 +111,49 @@ const Medicines = ({ allMedicines, companies }) => {
           {filteredMedicines.map((m) => (
             <div
               key={m.id}
-              className="relative bg-white border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300"
+              className={`relative bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300 ${getStatusClasses(
+                m.status
+              )}`}
             >
               {/* Gradient bar */}
               <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-green-500 to-emerald-600 rounded-t-xl"></div>
 
+              {/* Medicine Info */}
               <div className="mt-2">
-                <h4 className="text-lg font-semibold text-gray-800">
-                  {m.name}
-                </h4>
-                <p className="text-sm text-gray-600 mt-1">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="text-lg font-semibold text-gray-800">
+                    {m.name}
+                  </h4>
+                  <span
+                    className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                      m.status === "done"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-yellow-100 text-yellow-700"
+                    }`}
+                  >
+                    {m.status}
+                  </span>
+                </div>
+
+                <p className="text-sm text-gray-600">
                   Company:{" "}
                   <span className="font-medium text-gray-800">
                     {m.company?.companyName || "N/A"}
                   </span>
                 </p>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-600">
                   Quantity:{" "}
                   <span className="font-medium text-gray-800">
                     {m.quantity}
                   </span>
                 </p>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-600">
                   Price per unit:{" "}
                   <span className="font-medium text-gray-800">৳ {m.price}</span>
                 </p>
               </div>
 
+              {/* Subtotal */}
               <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
                 <p className="text-sm text-gray-500">Subtotal:</p>
                 <p className="text-lg font-semibold text-green-600">
@@ -111,26 +161,41 @@ const Medicines = ({ allMedicines, companies }) => {
                 </p>
               </div>
 
-              {/* Action buttons */}
+              {/* Actions */}
               <div className="mt-4 flex justify-between items-center">
-                <button
-                  onClick={() => {
-                    setSelectedMedicine(m);
-                    setUpdateModal(true);
-                  }}
-                  className="flex items-center gap-2 text-sm px-3 py-1 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200"
-                >
-                  <MdEdit /> Update
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedMedicine(m);
-                    setDeleteModal(true);
-                  }}
-                  className="flex items-center gap-2 text-sm px-3 py-1 rounded-md bg-red-100 text-red-600 hover:bg-red-200"
-                >
-                  <MdDelete /> Delete
-                </button>
+                {m.status !== "done" ? (
+                  <button
+                    onClick={() => handleMarkDone(m)}
+                    disabled={loading}
+                    className="flex items-center gap-2 text-sm px-3 py-1 rounded-md bg-green-100 text-green-700 hover:bg-green-200 disabled:opacity-50"
+                  >
+                    <MdDone /> Done
+                  </button>
+                ) : (
+                  <div className="text-sm text-gray-400 italic">Completed</div>
+                )}
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setSelectedMedicine(m);
+                      setUpdateModal(true);
+                    }}
+                    className="flex items-center gap-1 text-sm px-3 py-1 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200"
+                  >
+                    <MdEdit /> Edit
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setSelectedMedicine(m);
+                      setDeleteModal(true);
+                    }}
+                    className="flex items-center gap-1 text-sm px-3 py-1 rounded-md bg-red-100 text-red-600 hover:bg-red-200"
+                  >
+                    <MdDelete /> Delete
+                  </button>
+                </div>
               </div>
 
               <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-emerald-600 to-green-500 rounded-b-xl"></div>
