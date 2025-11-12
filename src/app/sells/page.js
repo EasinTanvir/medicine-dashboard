@@ -19,7 +19,7 @@ const SalesPage = async () => {
     <div>
       <Sales allCompanies={allCompanies} allSales={allSales.sales || []} />
 
-      {allCompanies?.length > 0 && (
+      {allSales?.sales?.length > 0 && (
         <DeleteAll
           endpoint="/api/sells/resetall"
           title="Reset All Sells"

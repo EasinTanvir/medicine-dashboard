@@ -3,6 +3,7 @@ import CustomersCard from "./CustomersCard/CustomersCard";
 import MedicinesCard from "./MedicinesCard/MedicinesCard";
 import SalesCard from "./SalesCard/SalesCard";
 import CompanyCard from "./CompanyCard/CompanyCard";
+import EarningsChart from "./EarningsChart";
 
 const Dashboard = ({ customers, medicines, sales, companies }) => {
   return (
@@ -16,6 +17,9 @@ const Dashboard = ({ customers, medicines, sales, companies }) => {
         <MedicinesCard data={medicines} />
         <SalesCard data={sales} />
         <CompanyCard data={companies} />
+      </div>
+      <div className="pt-8">
+        <EarningsChart sales={sales} />
       </div>
     </div>
   );
