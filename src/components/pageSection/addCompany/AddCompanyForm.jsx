@@ -36,6 +36,7 @@ const AddCompanyForm = () => {
         toast.success("✅ Company added successfully!");
         reset();
         router.push("/companies");
+        router.refresh();
       }
     } catch (error) {
       console.error("❌ Error creating company:", error);

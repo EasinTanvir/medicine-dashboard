@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Dashboard from "@/components/pageSection/dashboard/Dashboard";
 import { BASE_URL } from "@/libs/baseUrl";
 import { CACHING_TIME } from "@/libs/cacheTime";

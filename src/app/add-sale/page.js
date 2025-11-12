@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import AddSaleForm from "@/components/pageSection/addSale/AddSaleForm";
 import { BASE_URL } from "@/libs/baseUrl";
 import { CACHING_TIME } from "@/libs/cacheTime";

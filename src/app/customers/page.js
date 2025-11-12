@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Customers from "@/components/pageSection/customers/Customers";
 import DeleteAll from "@/components/shared/DeleteAll";
 import { BASE_URL } from "@/libs/baseUrl";

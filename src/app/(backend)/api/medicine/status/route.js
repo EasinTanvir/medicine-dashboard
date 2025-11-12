@@ -18,7 +18,7 @@ export async function PUT(req) {
       data: { status },
     });
 
-    revalidateTag("medicine");
+    revalidateTag("medicine", "max");
 
     return NextResponse.json(
       { message: "Status updated successfully", updatedMedicine },

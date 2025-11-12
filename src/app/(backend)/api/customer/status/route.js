@@ -36,7 +36,7 @@ export async function PUT(req) {
     });
 
     // ✅ Revalidate for cache consistency
-    revalidateTag("customer");
+    revalidateTag("customer", "max");
 
     return NextResponse.json(updatedCustomer, { status: 200 });
   } catch (error) {

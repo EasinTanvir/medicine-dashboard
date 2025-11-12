@@ -21,6 +21,7 @@ const SidebarItem = ({ item, openSidebar, setOpenSidebar }) => {
 
   return (
     <Link
+      prefetch
       onClick={handleClick}
       href={item.href}
       className={`flex items-center transition-all duration-200 overflow-hidden rounded-md

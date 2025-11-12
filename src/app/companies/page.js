@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import Companies from "@/components/pageSection/companies/Companies";
 import DeleteAll from "@/components/shared/DeleteAll";
 import { BASE_URL } from "@/libs/baseUrl";

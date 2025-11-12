@@ -6,7 +6,7 @@ export async function POST(req) {
   try {
     const { tag } = await req.json();
     const deleted = await prisma.company.deleteMany({});
-    revalidateTag(tag);
+    revalidateTag(tag, "max");
     return NextResponse.json(
       {
         message: "All companies have been reset successfully",

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import AddMedicineForm from "@/components/pageSection/addMedicine/AddMedicineForm";
 import { BASE_URL } from "@/libs/baseUrl";
 import { CACHING_TIME } from "@/libs/cacheTime";

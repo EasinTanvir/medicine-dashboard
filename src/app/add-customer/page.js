@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import React from "react";
 import AddCustomer from "@/components/pageSection/addCustomer/AddCustomer";
 import { fetchData } from "@/libs/fetchHelper";

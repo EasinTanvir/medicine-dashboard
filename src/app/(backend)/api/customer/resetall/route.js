@@ -7,7 +7,7 @@ export async function POST(req) {
     const { tag } = await req.json();
     const deleted = await prisma.customer.deleteMany({});
 
-    revalidateTag(tag);
+    revalidateTag(tag, "max");
     return NextResponse.json(
       {
         message: "All customers have been reset successfully",

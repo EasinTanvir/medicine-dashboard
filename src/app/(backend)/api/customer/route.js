@@ -37,7 +37,7 @@ export async function POST(req) {
       include: { medicines: { include: { company: true } } },
     });
 
-    revalidateTag("customer");
+    revalidateTag("customer", "max");
 
     return NextResponse.json(newCustomer, { status: 201 });
   } catch (error) {
@@ -121,7 +121,7 @@ export async function PUT(req) {
     });
 
     // 🧭 Step 4: Revalidate tag
-    revalidateTag("customer");
+    revalidateTag("customer", "max");
 
     return NextResponse.json(updatedCustomer, { status: 200 });
   } catch (error) {
@@ -143,7 +143,7 @@ export async function DELETE(req) {
       );
 
     await prisma.customer.delete({ where: { id } });
-    revalidateTag("customer");
+    revalidateTag("customer", "max");
     return NextResponse.json(
       { message: "Customer deleted successfully" },
       { status: 200 }

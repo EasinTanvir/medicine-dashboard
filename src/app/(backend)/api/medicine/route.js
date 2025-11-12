@@ -30,7 +30,7 @@ export async function POST(req) {
       })),
     });
 
-    revalidateTag("medicine");
+    revalidateTag("medicine", "max");
 
     return NextResponse.json(
       { message: "Medicines added successfully", newMedicines },
@@ -84,7 +84,7 @@ export async function PUT(req) {
         subTotal: (Number(quantity) || 0) * (Number(price) || 0),
       },
     });
-    revalidateTag("medicine");
+    revalidateTag("medicine", "max");
     return NextResponse.json(updatedMedicine, { status: 200 });
   } catch (error) {
     console.error("❌ Error updating medicine:", error);
@@ -106,7 +106,7 @@ export async function DELETE(req) {
       );
 
     await prisma.stockMedicine.delete({ where: { id } });
-    revalidateTag("medicine");
+    revalidateTag("medicine", "max");
     return NextResponse.json(
       { message: "Medicine deleted successfully" },
       { status: 200 }

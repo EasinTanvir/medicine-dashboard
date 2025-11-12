@@ -24,7 +24,7 @@ export async function POST(req) {
       },
     });
 
-    revalidateTag("company");
+    revalidateTag("company", "max");
 
     return NextResponse.json(newCompany, { status: 201 });
   } catch (error) {
@@ -66,7 +66,7 @@ export async function DELETE(req) {
     await prisma.company.delete({
       where: { id },
     });
-    revalidateTag("company");
+    revalidateTag("company", "max");
     return NextResponse.json(
       { message: "Company deleted successfully" },
       { status: 200 }
