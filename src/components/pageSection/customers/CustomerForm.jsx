@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { MdPersonAddAlt1 } from "react-icons/md";
 import toast from "react-hot-toast";
 import api from "@/libs/api";
+import { useRouter } from "next/navigation";
 
 const CustomerForm = ({
   allCompanies = [],
@@ -33,6 +34,8 @@ const CustomerForm = ({
     control,
     name: "medicines",
   });
+
+  const router = useRouter();
 
   // 🧠 Pre-fill data in edit mode
   useEffect(() => {
@@ -85,6 +88,7 @@ const CustomerForm = ({
         );
         if (onClose) onClose();
         reset();
+        router.refresh();
       }
     } catch (error) {
       console.error("❌ Error saving customer:", error);

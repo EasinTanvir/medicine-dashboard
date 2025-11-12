@@ -6,6 +6,7 @@ import { MdPersonAddAlt1 } from "react-icons/md";
 import toast from "react-hot-toast";
 
 import api from "@/libs/api";
+import { useRouter } from "next/navigation";
 
 const AddCustomerForm = ({ allCompanies }) => {
   const {
@@ -22,7 +23,7 @@ const AddCustomerForm = ({ allCompanies }) => {
       medicines: [{ medicineName: "", quantity: 1, companyId: "" }],
     },
   });
-
+  const router = useRouter();
   const { fields, append, remove } = useFieldArray({
     control,
     name: "medicines",
@@ -52,6 +53,7 @@ const AddCustomerForm = ({ allCompanies }) => {
       if (res.status === 201) {
         toast.success("✅ Customer added successfully!");
         reset();
+        router.push("/customers");
       }
     } catch (error) {
       console.error("❌ Error adding customer:", error);

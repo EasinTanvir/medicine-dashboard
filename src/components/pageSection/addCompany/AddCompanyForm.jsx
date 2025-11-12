@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { MdOutlineBusiness } from "react-icons/md";
 import api from "@/libs/api";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const AddCompanyForm = () => {
   const {
@@ -22,6 +23,7 @@ const AddCompanyForm = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const onSubmit = async (data) => {
     try {
@@ -33,6 +35,7 @@ const AddCompanyForm = () => {
       if (res.status === 201) {
         toast.success("✅ Company added successfully!");
         reset();
+        router.push("/companies");
       }
     } catch (error) {
       console.error("❌ Error creating company:", error);
