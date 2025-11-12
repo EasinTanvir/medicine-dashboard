@@ -61,7 +61,7 @@ const AddSalesForm = ({ allCompanies }) => {
       if (res.status === 201) {
         toast.success("✅ Sales recorded successfully!");
         reset();
-        router.refresh();
+        router.push("/sells");
       }
     } catch (error) {
       console.error("❌ Error recording sales:", error);
