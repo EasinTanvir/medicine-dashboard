@@ -1,122 +1,97 @@
 "use client";
 
-import { companies } from "@/dummydata";
 import React, { useState, useMemo } from "react";
-import { MdOutlineLocalPharmacy } from "react-icons/md";
+import { MdOutlineLocalPharmacy, MdEdit, MdDelete } from "react-icons/md";
+import BaseModal from "@/components/shared/BaseModal";
+import ConfirmAction from "@/components/shared/ConfirmAction";
+import api from "@/libs/api";
+import toast from "react-hot-toast";
+import MedicineEditForm from "./MedicineEditForm";
+import { useRouter } from "next/navigation";
 
-// Dummy dataset (simulate 5 companies with random medicines)
-const medicineData = [
-  {
-    company: "square",
-    medicines: [
-      { id: 1, name: "Paracetamol 500mg", quantity: 120, price: 2.5 },
-      { id: 2, name: "Napa Extra", quantity: 200, price: 3.5 },
-      { id: 3, name: "Ace Plus", quantity: 150, price: 3.0 },
-    ],
-  },
-  {
-    company: "incepta",
-    medicines: [
-      { id: 1, name: "Azithromycin 500mg", quantity: 80, price: 12 },
-      { id: 2, name: "Ceftriaxone 1g", quantity: 60, price: 15 },
-      { id: 3, name: "Cough Syrup", quantity: 100, price: 5 },
-    ],
-  },
-  {
-    company: "beximco",
-    medicines: [
-      { id: 1, name: "Nexum 20mg", quantity: 130, price: 8 },
-      { id: 2, name: "Maxpro 40mg", quantity: 90, price: 9 },
-      { id: 3, name: "Losectil", quantity: 70, price: 7.5 },
-    ],
-  },
-  {
-    company: "renata",
-    medicines: [
-      { id: 1, name: "Histacin", quantity: 140, price: 2 },
-      { id: 2, name: "Antacid", quantity: 160, price: 3 },
-      { id: 3, name: "Vitamin B Complex", quantity: 90, price: 5 },
-    ],
-  },
-  {
-    company: "aci",
-    medicines: [
-      { id: 1, name: "Savlon", quantity: 200, price: 10 },
-      { id: 2, name: "Pain Balm", quantity: 120, price: 6 },
-      { id: 3, name: "Hand Sanitizer", quantity: 250, price: 4 },
-    ],
-  },
-];
+const Medicines = ({ allMedicines, companies }) => {
+  const [selectedCompany, setSelectedCompany] = useState("");
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [updateModal, setUpdateModal] = useState(false);
+  const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  // Filter by company if selected
+  const filteredMedicines = useMemo(() => {
+    if (!selectedCompany) return allMedicines;
+    return allMedicines.filter((m) => m.company?.id === selectedCompany);
+  }, [selectedCompany, allMedicines]);
 
-const MedicineList = () => {
-  const [selectedCompany, setSelectedCompany] = useState(companies[0].slug);
-
-  const currentCompany = useMemo(() => {
-    const company = companies.find((c) => c.slug === selectedCompany);
-    const medicines = medicineData.find((m) => m.company === selectedCompany);
-    return {
-      name: company?.name || "",
-      medicines: medicines?.medicines || [],
-    };
-  }, [selectedCompany]);
-
-  // Calculate total value
-  const grandTotal = currentCompany.medicines.reduce(
-    (acc, m) => acc + m.price * m.quantity,
+  const grandTotal = filteredMedicines.reduce(
+    (acc, m) => acc + (m.price * m.quantity || 0),
     0
   );
 
+  // 🗑️ Handle delete
+  const handleDelete = async () => {
+    if (!selectedMedicine) return;
+    try {
+      setLoading(true);
+      await api.delete("/api/medicine", { data: { id: selectedMedicine.id } });
+      toast.success("Medicine deleted successfully");
+      setDeleteModal(false);
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete medicine");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-6xl mx-auto">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <MdOutlineLocalPharmacy className="text-green-600 w-8 h-8" />
         <h2 className="text-2xl font-semibold text-gray-800">Medicine List</h2>
       </div>
 
-      {/* Company Selector */}
+      {/* Company Filter */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Select Company
+          Filter by Company
         </label>
         <select
           value={selectedCompany}
           onChange={(e) => setSelectedCompany(e.target.value)}
           className="w-full sm:w-1/2 border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300 bg-white"
         >
+          <option value="">All Companies</option>
           {companies.map((c) => (
-            <option key={c.id} value={c.slug}>
-              {c.name}
+            <option key={c.id} value={c.id}>
+              {c.companyName}
             </option>
           ))}
         </select>
       </div>
 
-      {/* Company Overview */}
-      <div className="mb-6 p-4 border border-green-100 rounded-xl bg-green-50">
-        <h3 className="text-lg font-semibold text-green-700">
-          {currentCompany.name}
-        </h3>
-        <p className="text-sm text-gray-600">
-          Showing <strong>{currentCompany.medicines.length}</strong> medicines
-          under this company.
-        </p>
-      </div>
-
-      {/* Medicine Grid */}
-      {currentCompany.medicines.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {currentCompany.medicines.map((m) => (
+      {/* Medicine Cards */}
+      {filteredMedicines.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredMedicines.map((m) => (
             <div
               key={m.id}
-              className="relative bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md transition-all duration-300"
+              className="relative bg-white border border-gray-100 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300"
             >
+              {/* Gradient bar */}
               <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-green-500 to-emerald-600 rounded-t-xl"></div>
 
               <div className="mt-2">
                 <h4 className="text-lg font-semibold text-gray-800">
                   {m.name}
                 </h4>
+                <p className="text-sm text-gray-600 mt-1">
+                  Company:{" "}
+                  <span className="font-medium text-gray-800">
+                    {m.company?.companyName || "N/A"}
+                  </span>
+                </p>
                 <p className="text-sm text-gray-600 mt-1">
                   Quantity:{" "}
                   <span className="font-medium text-gray-800">
@@ -136,12 +111,34 @@ const MedicineList = () => {
                 </p>
               </div>
 
+              {/* Action buttons */}
+              <div className="mt-4 flex justify-between items-center">
+                <button
+                  onClick={() => {
+                    setSelectedMedicine(m);
+                    setUpdateModal(true);
+                  }}
+                  className="flex items-center gap-2 text-sm px-3 py-1 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200"
+                >
+                  <MdEdit /> Update
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedMedicine(m);
+                    setDeleteModal(true);
+                  }}
+                  className="flex items-center gap-2 text-sm px-3 py-1 rounded-md bg-red-100 text-red-600 hover:bg-red-200"
+                >
+                  <MdDelete /> Delete
+                </button>
+              </div>
+
               <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-emerald-600 to-green-500 rounded-b-xl"></div>
             </div>
           ))}
         </div>
       ) : (
-        <p className="text-gray-500 mt-4">No medicines found.</p>
+        <p className="text-gray-500 mt-4 text-center">No medicines found.</p>
       )}
 
       {/* Grand Total */}
@@ -151,8 +148,32 @@ const MedicineList = () => {
           ৳ {grandTotal.toFixed(2)}
         </p>
       </div>
+
+      {/* Delete Modal */}
+      <BaseModal isOpen={deleteModal} onClose={() => setDeleteModal(false)}>
+        <ConfirmAction
+          title="Delete Medicine"
+          message={`Are you sure you want to delete "${selectedMedicine?.name}"? This action cannot be undone.`}
+          confirmText="Yes, Delete"
+          confirmColor="red"
+          onClose={() => setDeleteModal(false)}
+          onConfirm={handleDelete}
+          loading={loading}
+        />
+      </BaseModal>
+
+      {/* Update Modal */}
+      <BaseModal isOpen={updateModal} onClose={() => setUpdateModal(false)}>
+        {selectedMedicine && (
+          <MedicineEditForm
+            medicine={selectedMedicine}
+            onClose={() => setUpdateModal(false)}
+            companies={companies}
+          />
+        )}
+      </BaseModal>
     </div>
   );
 };
 
-export default MedicineList;
+export default Medicines;

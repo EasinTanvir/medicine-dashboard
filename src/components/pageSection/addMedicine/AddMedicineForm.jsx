@@ -1,21 +1,24 @@
 "use client";
 
-import { companies } from "@/dummydata";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { MdOutlineLocalPharmacy } from "react-icons/md";
+import toast from "react-hot-toast";
+import api from "@/libs/api";
+import { useRouter } from "next/navigation";
 
-const AddMedicineForm = () => {
+const AddMedicineForm = ({ companies = [] }) => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     control,
-    watch,
     reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      company: "",
+      companyId: "",
       medicines: [{ name: "", quantity: 1, price: 0 }],
     },
   });
@@ -24,29 +27,43 @@ const AddMedicineForm = () => {
     control,
     name: "medicines",
   });
-
-  // Watch medicines array for live calculation
   const medicines = useWatch({ control, name: "medicines" });
 
-  // Calculate subtotal for each item
   const calculateSubtotal = (m) =>
     (Number(m.quantity) || 0) * (Number(m.price) || 0);
 
-  // Calculate grand total
   const grandTotal = medicines?.reduce(
     (acc, m) => acc + calculateSubtotal(m),
     0
   );
 
-  const onSubmit = (data) => {
-    console.log("✅ Medicine Data Submitted:", data);
-    alert("Medicine list saved successfully!");
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+      const payload = {
+        companyId: data.companyId,
+        medicines: data.medicines.map((m) => ({
+          name: m.name,
+          quantity: Number(m.quantity) || 1,
+          price: Number(m.price) || 0,
+        })),
+      };
+
+      const res = await api.post("/api/medicine", payload);
+      toast.success("Medicines added successfully!");
+
+      reset();
+      router.refresh();
+    } catch (error) {
+      console.error("❌ Error adding medicine:", error);
+      toast.error("Failed to add medicines");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="bg-white shadow-md rounded-2xl p-8 border border-gray-100 hover:shadow-lg transition duration-300 max-w-3xl mx-auto">
-      {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <MdOutlineLocalPharmacy className="text-green-600 w-8 h-8" />
         <h2 className="text-2xl font-semibold text-gray-800">Add Medicines</h2>
@@ -59,24 +76,24 @@ const AddMedicineForm = () => {
             Select Company <span className="text-red-500">*</span>
           </label>
           <select
-            {...register("company", { required: "Company is required" })}
+            {...register("companyId", { required: "Company is required" })}
             defaultValue=""
             className={`w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 ${
-              errors.company ? "border-red-500" : "border-gray-300"
+              errors.companyId ? "border-red-500" : "border-gray-300"
             }`}
           >
             <option value="" disabled>
               Choose a company
             </option>
             {companies.map((c) => (
-              <option key={c.id} value={c.slug}>
-                {c.name}
+              <option key={c.id} value={c.id}>
+                {c.companyName}
               </option>
             ))}
           </select>
-          {errors.company && (
+          {errors.companyId && (
             <p className="text-sm text-red-500 mt-1">
-              {errors.company.message}
+              {errors.companyId.message}
             </p>
           )}
         </div>
@@ -121,13 +138,13 @@ const AddMedicineForm = () => {
                 {/* Quantity */}
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1">
-                    Quantity (optional)
+                    Quantity
                   </label>
                   <input
                     type="number"
-                    defaultValue={1}
                     {...register(`medicines.${index}.quantity`)}
                     className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300"
+                    defaultValue={1}
                   />
                 </div>
 
@@ -138,9 +155,9 @@ const AddMedicineForm = () => {
                   </label>
                   <input
                     type="number"
-                    defaultValue={0}
                     {...register(`medicines.${index}.price`)}
                     className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300"
+                    defaultValue={0}
                   />
                 </div>
 
@@ -150,7 +167,6 @@ const AddMedicineForm = () => {
                     Subtotal (৳)
                   </label>
                   <input
-                    type="text"
                     readOnly
                     value={subtotal.toFixed(2)}
                     className="w-full border rounded-md px-3 py-2 bg-gray-100 text-gray-700 border-gray-300"
@@ -173,7 +189,6 @@ const AddMedicineForm = () => {
             );
           })}
 
-          {/* Add More Button */}
           <button
             type="button"
             onClick={() => append({ name: "", quantity: 1, price: 0 })}
@@ -191,13 +206,36 @@ const AddMedicineForm = () => {
           </p>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <div className="pt-4">
           <button
             type="submit"
-            className="w-full bg-linear-to-r from-green-600 to-emerald-500 text-white font-semibold py-3 rounded-md hover:opacity-90 transition duration-200"
+            disabled={loading}
+            className="w-full bg-linear-to-r from-green-600 to-emerald-500 text-white font-semibold py-3 rounded-md hover:opacity-90 transition duration-200 flex justify-center items-center"
           >
-            Save Medicines
+            {loading && (
+              <svg
+                className="animate-spin h-5 w-5 mr-2 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4l3.5-3.5L12 0v4a8 8 0 100 16v-4l-3.5 3.5L12 24v-4a8 8 0 01-8-8z"
+                ></path>
+              </svg>
+            )}
+            {loading ? "Saving..." : "Save Medicines"}
           </button>
         </div>
       </form>

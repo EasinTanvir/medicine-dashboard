@@ -1,25 +1,24 @@
 import { prisma } from "@/libs/prismaCli";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
+// ✅ CREATE medicines (bulk)
 export async function POST(req) {
   try {
     const body = await req.json();
     const { companyId, medicines } = body;
 
-    if (!companyId) {
+    if (!companyId)
       return NextResponse.json(
         { error: "Company ID is required" },
         { status: 400 }
       );
-    }
 
     const companyExists = await prisma.company.findUnique({
       where: { id: companyId },
     });
-
-    if (!companyExists) {
+    if (!companyExists)
       return NextResponse.json({ error: "Company not found" }, { status: 404 });
-    }
 
     const newMedicines = await prisma.stockMedicine.createMany({
       data: medicines.map((m) => ({
@@ -30,6 +29,8 @@ export async function POST(req) {
         companyId,
       })),
     });
+
+    revalidateTag("medicine");
 
     return NextResponse.json(
       { message: "Medicines added successfully", newMedicines },
@@ -44,59 +45,74 @@ export async function POST(req) {
   }
 }
 
-/**
- * ✅ GET: Fetch all medicines OR filter by companyId
- * Usage:
- *   - GET /api/medicine               → all medicines (with company info)
- *   - GET /api/medicine?companyId=xxx → medicines for one company
- */
-export async function GET(req) {
+// ✅ READ all medicines
+export async function GET() {
   try {
-    const { searchParams } = new URL(req.url);
-    const companyId = searchParams.get("companyId");
-
-    // Filter by company if provided
-    const where = companyId ? { companyId } : {};
-
     const medicines = await prisma.stockMedicine.findMany({
-      where,
-      include: {
-        company: {
-          select: {
-            id: true,
-            companyName: true,
-            representativeName: true,
-          },
-        },
-      },
+      include: { company: true },
       orderBy: { createdAt: "desc" },
     });
 
-    if (!medicines.length) {
-      return NextResponse.json(
-        { message: "No medicines found" },
-        { status: 200 }
-      );
-    }
-
-    // ✅ Compute totals
-    const totalQuantity = medicines.reduce(
-      (acc, m) => acc + (m.quantity || 0),
-      0
-    );
-    const totalValue = medicines.reduce((acc, m) => acc + (m.subTotal || 0), 0);
-
+    return NextResponse.json(medicines, { status: 200 });
+  } catch (error) {
+    console.error("❌ Error fetching medicines:", error);
     return NextResponse.json(
-      {
-        totalRecords: medicines.length,
-        totalQuantity,
-        totalValue,
-        medicines,
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+// ✅ UPDATE single medicine
+export async function PUT(req) {
+  try {
+    const body = await req.json();
+    const { id, name, quantity, price } = body;
+
+    if (!id)
+      return NextResponse.json(
+        { error: "Medicine ID is required" },
+        { status: 400 }
+      );
+
+    const updatedMedicine = await prisma.stockMedicine.update({
+      where: { id },
+      data: {
+        name,
+        quantity: Number(quantity) || 1,
+        price: Number(price) || 0,
+        subTotal: (Number(quantity) || 0) * (Number(price) || 0),
       },
+    });
+    revalidateTag("medicine");
+    return NextResponse.json(updatedMedicine, { status: 200 });
+  } catch (error) {
+    console.error("❌ Error updating medicine:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+// ✅ DELETE single medicine
+export async function DELETE(req) {
+  try {
+    const { id } = await req.json();
+    if (!id)
+      return NextResponse.json(
+        { error: "Medicine ID is required" },
+        { status: 400 }
+      );
+
+    await prisma.stockMedicine.delete({ where: { id } });
+    revalidateTag("medicine");
+    return NextResponse.json(
+      { message: "Medicine deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("❌ Error fetching medicines:", error);
+    console.error("❌ Error deleting medicine:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
