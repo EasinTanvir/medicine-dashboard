@@ -41,7 +41,7 @@ export async function POST(req) {
       })),
     });
 
-    revalidateTag("sales");
+    revalidateTag("sells");
 
     return NextResponse.json(
       { message: "Sales recorded successfully", count: created.count },

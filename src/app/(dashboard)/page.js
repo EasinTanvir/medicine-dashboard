@@ -1,25 +1,22 @@
 import Dashboard from "@/components/pageSection/dashboard/Dashboard";
 import { BASE_URL } from "@/libs/baseUrl";
+import { CACHING_TIME } from "@/libs/cacheTime";
 import { fetchData } from "@/libs/fetchHelper";
 import React from "react";
 
 const DashBoardPage = async () => {
   const [customers, medicines, sales, companies] = await Promise.all([
     fetchData(`${BASE_URL}/api/customer`, {
-      cache: "no-store",
-      next: { tags: ["customer"] },
+      next: { revalidate: CACHING_TIME, tags: ["customer"] },
     }),
     fetchData(`${BASE_URL}/api/medicine`, {
-      cache: "no-store",
-      next: { tags: ["medicine"] },
+      next: { revalidate: CACHING_TIME, tags: ["medicine"] },
     }),
     fetchData(`${BASE_URL}/api/sells`, {
-      cache: "no-store",
-      next: { tags: ["sales"] },
+      next: { revalidate: CACHING_TIME, tags: ["sells"] },
     }),
     fetchData(`${BASE_URL}/api/company`, {
-      cache: "force-cache",
-      next: { tags: ["company"] },
+      next: { revalidate: CACHING_TIME, tags: ["company"] },
     }),
   ]);
 

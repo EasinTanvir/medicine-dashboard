@@ -2,11 +2,11 @@ import React from "react";
 import AddCustomer from "@/components/pageSection/addCustomer/AddCustomer";
 import { fetchData } from "@/libs/fetchHelper";
 import { BASE_URL } from "@/libs/baseUrl";
+import { CACHING_TIME } from "@/libs/cacheTime";
 
 const CustomersPage = async () => {
   const allCompanies = await fetchData(`${BASE_URL}/api/company`, {
-    cache: "force-cache",
-    next: { tags: ["company"] },
+    next: { revalidate: CACHING_TIME, tags: ["company"] },
   });
 
   return (
