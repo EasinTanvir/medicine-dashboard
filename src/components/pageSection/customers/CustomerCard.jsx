@@ -16,9 +16,9 @@ const CustomerCard = ({ customer, allCompanies }) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [statusModal, setStatusModal] = useState(false);
   const [editModal, setEditModal] = useState(false);
-
   const router = useRouter();
 
+  // ✅ Handle status update
   const handleStatusUpdate = async () => {
     try {
       setLoading(true);
@@ -36,6 +36,7 @@ const CustomerCard = ({ customer, allCompanies }) => {
     }
   };
 
+  // 🗑️ Handle delete
   const handleDelete = async () => {
     try {
       setLoading(true);
@@ -50,12 +51,18 @@ const CustomerCard = ({ customer, allCompanies }) => {
     }
   };
 
+  // 🧩 Conditional styles
+  const getCardClasses = (status) => {
+    if (status === "done") return "border-green-400 bg-green-50";
+    return "border-red-300 bg-red-50/70"; // ✅ subtle reddish tint for pending
+  };
+
   return (
     <motion.div
       layout
-      className={`relative bg-white border rounded-xl shadow-sm p-5 hover:shadow-md transition ${
-        customer.status === "done" ? "border-green-400" : "border-yellow-300"
-      }`}
+      className={`relative border rounded-xl shadow-sm p-5 hover:shadow-md transition ${getCardClasses(
+        customer.status
+      )}`}
     >
       {/* Header */}
       <div className="flex justify-between items-center mb-3">
@@ -66,7 +73,7 @@ const CustomerCard = ({ customer, allCompanies }) => {
           className={`px-3 py-1 rounded-full text-xs font-semibold ${
             customer.status === "done"
               ? "bg-green-100 text-green-700"
-              : "bg-yellow-100 text-yellow-700"
+              : "bg-red-100 text-red-700"
           }`}
         >
           {customer.status.toUpperCase()}
@@ -74,18 +81,18 @@ const CustomerCard = ({ customer, allCompanies }) => {
       </div>
 
       {/* Info */}
-      <p className="text-sm text-gray-600 mb-2">
-        <MdCall className="inline mr-1 text-blue-600" />
+      <p className="text-sm text-gray-700 mb-2 flex items-center gap-1">
+        <MdCall className="text-blue-600" />
         {customer.customerPhone || "No phone provided"}
       </p>
-      <p className="text-sm text-gray-600">
-        <MdLocationOn className="inline mr-1 text-red-600" />
+      <p className="text-sm text-gray-700 flex items-center gap-1">
+        <MdLocationOn className="text-red-600" />
         {customer.customerAddress || "No address provided"}
       </p>
 
       {/* Medicines */}
       <div className="mt-4 border-t pt-3">
-        <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+        <h4 className="text-sm font-semibold text-gray-800 mb-2 flex items-center gap-2">
           <FaPills className="text-green-500" /> Medicines
         </h4>
         {customer.medicines.length > 0 ? (
@@ -93,7 +100,7 @@ const CustomerCard = ({ customer, allCompanies }) => {
             {customer.medicines.map((m) => (
               <li
                 key={m.id}
-                className="flex justify-between items-center bg-gray-50 p-2 rounded-md text-sm"
+                className="flex justify-between items-center bg-white/70 p-2 rounded-md text-sm border border-gray-100"
               >
                 <div>
                   <p className="font-medium text-gray-800">{m.medicineName}</p>

@@ -18,7 +18,7 @@ import Link from "next/link";
 
 const Medicines = ({ allMedicines, companies }) => {
   const [selectedCompany, setSelectedCompany] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("pending"); // ✅ Default filter
+  const [selectedStatus, setSelectedStatus] = useState("pending");
   const [deleteModal, setDeleteModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
@@ -28,21 +28,16 @@ const Medicines = ({ allMedicines, companies }) => {
   // 🧩 Filter by company and status
   const filteredMedicines = useMemo(() => {
     let filtered = allMedicines;
-
-    // Filter by company if selected
     if (selectedCompany) {
       filtered = filtered.filter((m) => m.company?.id === selectedCompany);
     }
-
-    // Filter by status (default pending)
     if (selectedStatus) {
       filtered = filtered.filter((m) => m.status === selectedStatus);
     }
-
     return filtered;
   }, [selectedCompany, selectedStatus, allMedicines]);
 
-  // 🧮 Calculate grand total
+  // 🧮 Grand total
   const grandTotal = filteredMedicines.reduce(
     (acc, m) => acc + (m.price * m.quantity || 0),
     0
@@ -58,7 +53,6 @@ const Medicines = ({ allMedicines, companies }) => {
       setDeleteModal(false);
       router.refresh();
     } catch (error) {
-      console.error(error);
       toast.error("Failed to delete medicine");
     } finally {
       setLoading(false);
@@ -75,21 +69,21 @@ const Medicines = ({ allMedicines, companies }) => {
       });
       toast.success(`"${medicine.name}" marked as done ✅`);
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error("Failed to update status");
     } finally {
       setLoading(false);
     }
   };
 
-  // 🧩 Status color mapping
+  // 🎨 Status-based styling
   const getStatusClasses = (status) => {
     switch (status) {
       case "done":
-        return "border-green-400 bg-green-50";
+        return "border-green-300 bg-green-50";
       case "pending":
       default:
-        return "border-yellow-300 bg-yellow-50";
+        return "border-red-300 bg-red-50/70"; // ✅ subtle red tint for pending
     }
   };
 
@@ -146,15 +140,12 @@ const Medicines = ({ allMedicines, companies }) => {
             {filteredMedicines.map((m) => (
               <div
                 key={m.id}
-                className={`relative bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300 ${getStatusClasses(
+                className={`relative border rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300 ${getStatusClasses(
                   m.status
                 )}`}
               >
-                {/* Gradient bar */}
-                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-green-500 to-emerald-600 rounded-t-xl"></div>
-
                 {/* Medicine Info */}
-                <div className="mt-2">
+                <div className="mt-1">
                   <div className="flex justify-between items-center mb-2">
                     <h4 className="text-lg font-semibold text-gray-800">
                       {m.name}
@@ -163,7 +154,7 @@ const Medicines = ({ allMedicines, companies }) => {
                       className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         m.status === "done"
                           ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
+                          : "bg-red-100 text-red-700"
                       }`}
                     >
                       {m.status}
@@ -191,7 +182,7 @@ const Medicines = ({ allMedicines, companies }) => {
                 </div>
 
                 {/* Subtotal */}
-                <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                <div className="mt-4 flex justify-between items-center border-t border-gray-100 pt-2">
                   <p className="text-sm text-gray-500">Subtotal:</p>
                   <p className="text-lg font-semibold text-green-600">
                     ৳ {(m.price * m.quantity).toFixed(2)}
@@ -236,8 +227,6 @@ const Medicines = ({ allMedicines, companies }) => {
                     </button>
                   </div>
                 </div>
-
-                <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-emerald-600 to-green-500 rounded-b-xl"></div>
               </div>
             ))}
           </div>
@@ -253,7 +242,7 @@ const Medicines = ({ allMedicines, companies }) => {
       ) : (
         <div className="pt-16 space-y-10">
           <EmptyState title="No Medicine Found" color="red" />
-          <div className=" flex justify-center">
+          <div className="flex justify-center">
             <Link
               className="bg-black text-white rounded-2xl py-2 px-10"
               href="/add-medicine"
