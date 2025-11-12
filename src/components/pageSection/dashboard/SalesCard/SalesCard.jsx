@@ -40,7 +40,7 @@ const SalesCard = ({ data = [] }) => {
 
         <div className="flex flex-col items-center">
           <span className="text-sm font-medium text-gray-600 mb-1">
-            Companies
+            Total Companies
           </span>
           <div className="px-4 py-2 rounded-full bg-pink-50 text-pink-700 font-semibold text-lg shadow-sm border border-pink-200">
             {uniqueCompanies}

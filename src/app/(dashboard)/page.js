@@ -22,7 +22,7 @@ const DashBoardPage = async () => {
       next: { tags: ["company"] },
     }),
   ]);
-  console.log("sales", sales);
+
   return (
     <div>
       <Dashboard
