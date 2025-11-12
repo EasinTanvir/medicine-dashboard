@@ -14,27 +14,41 @@ import api from "@/libs/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import EmptyState from "@/components/shared/EmptyState";
+import Link from "next/link";
 
 const Medicines = ({ allMedicines, companies }) => {
   const [selectedCompany, setSelectedCompany] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("pending"); // ✅ Default filter
   const [deleteModal, setDeleteModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // 🧩 Filter by company
+  // 🧩 Filter by company and status
   const filteredMedicines = useMemo(() => {
-    if (!selectedCompany) return allMedicines;
-    return allMedicines.filter((m) => m.company?.id === selectedCompany);
-  }, [selectedCompany, allMedicines]);
+    let filtered = allMedicines;
 
+    // Filter by company if selected
+    if (selectedCompany) {
+      filtered = filtered.filter((m) => m.company?.id === selectedCompany);
+    }
+
+    // Filter by status (default pending)
+    if (selectedStatus) {
+      filtered = filtered.filter((m) => m.status === selectedStatus);
+    }
+
+    return filtered;
+  }, [selectedCompany, selectedStatus, allMedicines]);
+
+  // 🧮 Calculate grand total
   const grandTotal = filteredMedicines.reduce(
     (acc, m) => acc + (m.price * m.quantity || 0),
     0
   );
 
-  // 🗑️ Delete
+  // 🗑️ Delete handler
   const handleDelete = async () => {
     if (!selectedMedicine) return;
     try {
@@ -87,135 +101,168 @@ const Medicines = ({ allMedicines, companies }) => {
         <h2 className="text-2xl font-semibold text-gray-800">Medicine List</h2>
       </div>
 
-      {/* Company Filter */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Filter by Company
-        </label>
-        <select
-          value={selectedCompany}
-          onChange={(e) => setSelectedCompany(e.target.value)}
-          className="w-full sm:w-1/2 border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300 bg-white"
-        >
-          <option value="">All Companies</option>
-          {companies.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.companyName}
-            </option>
-          ))}
-        </select>
+      {/* Filters */}
+      <div className="mb-6 grid sm:grid-cols-2 gap-4">
+        {/* Company Filter */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Filter by Company
+          </label>
+          <select
+            value={selectedCompany}
+            onChange={(e) => setSelectedCompany(e.target.value)}
+            className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300 bg-white"
+          >
+            <option value="">All Companies</option>
+            {companies.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.companyName}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Status Filter */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Filter by Status
+          </label>
+          <select
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300 bg-white"
+          >
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="done">Done</option>
+          </select>
+        </div>
       </div>
 
       {/* Medicine Cards */}
       {filteredMedicines.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {filteredMedicines.map((m) => (
-            <div
-              key={m.id}
-              className={`relative bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300 ${getStatusClasses(
-                m.status
-              )}`}
-            >
-              {/* Gradient bar */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-green-500 to-emerald-600 rounded-t-xl"></div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredMedicines.map((m) => (
+              <div
+                key={m.id}
+                className={`relative bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-300 ${getStatusClasses(
+                  m.status
+                )}`}
+              >
+                {/* Gradient bar */}
+                <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-green-500 to-emerald-600 rounded-t-xl"></div>
 
-              {/* Medicine Info */}
-              <div className="mt-2">
-                <div className="flex justify-between items-center mb-2">
-                  <h4 className="text-lg font-semibold text-gray-800">
-                    {m.name}
-                  </h4>
-                  <span
-                    className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                      m.status === "done"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
-                  >
-                    {m.status}
-                  </span>
+                {/* Medicine Info */}
+                <div className="mt-2">
+                  <div className="flex justify-between items-center mb-2">
+                    <h4 className="text-lg font-semibold text-gray-800">
+                      {m.name}
+                    </h4>
+                    <span
+                      className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                        m.status === "done"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {m.status}
+                    </span>
+                  </div>
+
+                  <p className="text-sm text-gray-600">
+                    Company:{" "}
+                    <span className="font-medium text-gray-800">
+                      {m.company?.companyName || "N/A"}
+                    </span>
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Quantity:{" "}
+                    <span className="font-medium text-gray-800">
+                      {m.quantity}
+                    </span>
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Price per unit:{" "}
+                    <span className="font-medium text-gray-800">
+                      ৳ {m.price}
+                    </span>
+                  </p>
                 </div>
 
-                <p className="text-sm text-gray-600">
-                  Company:{" "}
-                  <span className="font-medium text-gray-800">
-                    {m.company?.companyName || "N/A"}
-                  </span>
-                </p>
-                <p className="text-sm text-gray-600">
-                  Quantity:{" "}
-                  <span className="font-medium text-gray-800">
-                    {m.quantity}
-                  </span>
-                </p>
-                <p className="text-sm text-gray-600">
-                  Price per unit:{" "}
-                  <span className="font-medium text-gray-800">৳ {m.price}</span>
-                </p>
-              </div>
-
-              {/* Subtotal */}
-              <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
-                <p className="text-sm text-gray-500">Subtotal:</p>
-                <p className="text-lg font-semibold text-green-600">
-                  ৳ {(m.price * m.quantity).toFixed(2)}
-                </p>
-              </div>
-
-              {/* Actions */}
-              <div className="mt-4 flex justify-between items-center">
-                {m.status !== "done" ? (
-                  <button
-                    onClick={() => handleMarkDone(m)}
-                    disabled={loading}
-                    className="flex items-center gap-2 text-sm px-3 py-1 rounded-md bg-green-100 text-green-700 hover:bg-green-200 disabled:opacity-50"
-                  >
-                    <MdDone /> Done
-                  </button>
-                ) : (
-                  <div className="text-sm text-gray-400 italic">Completed</div>
-                )}
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => {
-                      setSelectedMedicine(m);
-                      setUpdateModal(true);
-                    }}
-                    className="flex items-center gap-1 text-sm px-3 py-1 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200"
-                  >
-                    <MdEdit /> Edit
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setSelectedMedicine(m);
-                      setDeleteModal(true);
-                    }}
-                    className="flex items-center gap-1 text-sm px-3 py-1 rounded-md bg-red-100 text-red-600 hover:bg-red-200"
-                  >
-                    <MdDelete /> Delete
-                  </button>
+                {/* Subtotal */}
+                <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center">
+                  <p className="text-sm text-gray-500">Subtotal:</p>
+                  <p className="text-lg font-semibold text-green-600">
+                    ৳ {(m.price * m.quantity).toFixed(2)}
+                  </p>
                 </div>
-              </div>
 
-              <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-emerald-600 to-green-500 rounded-b-xl"></div>
-            </div>
-          ))}
+                {/* Actions */}
+                <div className="mt-4 flex justify-between items-center">
+                  {m.status !== "done" ? (
+                    <button
+                      onClick={() => handleMarkDone(m)}
+                      disabled={loading}
+                      className="flex items-center gap-2 text-sm px-3 py-1 rounded-md bg-green-100 text-green-700 hover:bg-green-200 disabled:opacity-50"
+                    >
+                      <MdDone /> Done
+                    </button>
+                  ) : (
+                    <div className="text-sm text-gray-400 italic">
+                      Completed
+                    </div>
+                  )}
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setSelectedMedicine(m);
+                        setUpdateModal(true);
+                      }}
+                      className="flex items-center gap-1 text-sm px-3 py-1 rounded-md bg-blue-100 text-blue-600 hover:bg-blue-200"
+                    >
+                      <MdEdit /> Edit
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setSelectedMedicine(m);
+                        setDeleteModal(true);
+                      }}
+                      className="flex items-center gap-1 text-sm px-3 py-1 rounded-md bg-red-100 text-red-600 hover:bg-red-200"
+                    >
+                      <MdDelete /> Delete
+                    </button>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-emerald-600 to-green-500 rounded-b-xl"></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Grand Total */}
           <div className="mt-10 p-5 border-t border-gray-100 flex justify-between items-center bg-green-50 rounded-xl">
             <p className="text-lg font-semibold text-gray-800">Grand Total:</p>
             <p className="text-2xl font-bold text-green-700">
               ৳ {grandTotal.toFixed(2)}
             </p>
           </div>
-        </div>
+        </>
       ) : (
         <div className="pt-16 space-y-10">
           <EmptyState title="No Medicine Found" color="red" />
+          <div className=" flex justify-center">
+            <Link
+              className="bg-black text-white rounded-2xl py-2 px-10"
+              href="/add-medicine"
+            >
+              Add Medicine
+            </Link>
+          </div>
         </div>
       )}
-
-      {/* Grand Total */}
 
       {/* Delete Modal */}
       <BaseModal isOpen={deleteModal} onClose={() => setDeleteModal(false)}>

@@ -53,7 +53,7 @@ const AddMedicineForm = ({ companies = [] }) => {
       toast.success("Medicines added successfully!");
 
       reset();
-      router.refresh();
+      router.push("/medicines");
     } catch (error) {
       console.error("❌ Error adding medicine:", error);
       toast.error("Failed to add medicines");
