@@ -1,23 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { MdPointOfSale } from "react-icons/md";
+import toast from "react-hot-toast";
+import api from "@/libs/api";
 
-const companies = [
-  { id: 1, name: "Square Pharmaceuticals Ltd.", slug: "square" },
-  { id: 2, name: "Incepta Pharmaceuticals Ltd.", slug: "incepta" },
-  { id: 3, name: "Beximco Pharmaceuticals Ltd.", slug: "beximco" },
-  { id: 4, name: "Renata Limited", slug: "renata" },
-  { id: 5, name: "Eskayef Pharmaceuticals Ltd.", slug: "eskayef" },
-  { id: 6, name: "ACI Limited", slug: "aci" },
-  { id: 7, name: "Opsonin Pharma Limited", slug: "opsonin" },
-  { id: 8, name: "Healthcare Pharmaceuticals Ltd.", slug: "healthcare" },
-  { id: 9, name: "Aristopharma Ltd.", slug: "aristopharma" },
-  { id: 10, name: "General Pharmaceuticals Ltd.", slug: "general" },
-];
-
-const AddSalesForm = () => {
+const AddSalesForm = ({ allCompanies }) => {
   const {
     register,
     handleSubmit,
@@ -29,7 +18,7 @@ const AddSalesForm = () => {
       sales: [
         {
           medicineName: "",
-          company: "",
+          companyId: "",
           quantity: 1,
           price: 0,
           date: new Date().toISOString().slice(0, 10),
@@ -45,15 +34,38 @@ const AddSalesForm = () => {
 
   const sales = useWatch({ control, name: "sales" });
 
+  const [loading, setLoading] = useState(false);
+
   const calculateSubtotal = (s) =>
     (Number(s.quantity) || 0) * (Number(s.price) || 0);
 
   const grandTotal = sales?.reduce((acc, s) => acc + calculateSubtotal(s), 0);
 
-  const onSubmit = (data) => {
-    console.log("✅ Sales Data Submitted:", data);
-    alert("Sales record saved successfully!");
-    reset();
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+
+      const formattedSales = data.sales.map((s) => ({
+        medicineName: s.medicineName,
+        companyId: s.companyId || null,
+        quantity: Number(s.quantity) || 1,
+        price: Number(s.price) || 0,
+        subTotal: (Number(s.quantity) || 0) * (Number(s.price) || 0),
+        date: s.date,
+      }));
+
+      const res = await api.post("/api/sells", { sales: formattedSales });
+
+      if (res.status === 201) {
+        toast.success("✅ Sales recorded successfully!");
+        reset();
+      }
+    } catch (error) {
+      console.error("❌ Error recording sales:", error);
+      toast.error(error.response?.data?.error || "Failed to record sales");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -102,16 +114,14 @@ const AddSalesForm = () => {
                   Company (optional)
                 </label>
                 <select
-                  {...register(`sales.${index}.company`)}
+                  {...register(`sales.${index}.companyId`)}
                   defaultValue=""
                   className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-pink-500 border-gray-300 bg-white"
                 >
-                  <option value="" disabled>
-                    Select company
-                  </option>
-                  {companies.map((company) => (
-                    <option key={company.id} value={company.slug}>
-                      {company.name}
+                  <option value="">Select company</option>
+                  {allCompanies?.map((company) => (
+                    <option key={company.id} value={company.id}>
+                      {company.companyName}
                     </option>
                   ))}
                 </select>
@@ -191,7 +201,7 @@ const AddSalesForm = () => {
           onClick={() =>
             append({
               medicineName: "",
-              company: "",
+              companyId: "",
               quantity: 1,
               price: 0,
               date: new Date().toISOString().slice(0, 10),
@@ -214,9 +224,12 @@ const AddSalesForm = () => {
         <div className="pt-4">
           <button
             type="submit"
-            className="w-full bg-linear-to-r from-pink-600 to-rose-500 text-white font-semibold py-3 rounded-md hover:opacity-90 transition duration-200"
+            disabled={loading}
+            className={`w-full bg-linear-to-r from-pink-600 to-rose-500 text-white font-semibold py-3 rounded-md transition duration-200 ${
+              loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
+            }`}
           >
-            Save Sale Record
+            {loading ? "Saving..." : "Save Sale Record"}
           </button>
         </div>
       </form>

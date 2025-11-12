@@ -13,7 +13,7 @@ export async function POST(req) {
       );
     }
 
-    // Validate company existence if provided
+    // Validate all company IDs (if provided)
     for (const s of sales) {
       if (s.companyId) {
         const exists = await prisma.company.findUnique({
@@ -28,20 +28,20 @@ export async function POST(req) {
       }
     }
 
-    // Create sales records
-    const newSales = await prisma.sale.createMany({
+    // Insert all sales
+    const created = await prisma.sale.createMany({
       data: sales.map((s) => ({
         medicineName: s.medicineName,
         quantity: Number(s.quantity) || 1,
         price: Number(s.price) || 0,
         subTotal: (Number(s.quantity) || 0) * (Number(s.price) || 0),
-        companyId: s.companyId || null,
         date: s.date ? new Date(s.date) : new Date(),
+        companyId: s.companyId || null,
       })),
     });
 
     return NextResponse.json(
-      { message: "Sales recorded successfully", newSales },
+      { message: "Sales recorded successfully", count: created.count },
       { status: 201 }
     );
   } catch (error) {
