@@ -20,8 +20,10 @@ const CustomersCard = ({ data }) => {
         <div className="flex items-center gap-3">
           <MdPeopleOutline className="text-blue-500 w-10 h-10" />
           <div>
-            <h2 className="text-xl font-semibold text-gray-800">Customers</h2>
-            <p className="text-sm text-gray-500">Customer Overview</p>
+            <h2 className="text-xl font-semibold text-gray-800">
+              Required Medicine for Customers
+            </h2>
+            <p className="text-sm text-gray-500"> Overview</p>
           </div>
         </div>
       </div>

@@ -2,6 +2,8 @@
 
 import React, { useMemo, useState } from "react";
 import CustomerCard from "./CustomerCard";
+import EmptyState from "@/components/shared/EmptyState";
+import { MdSearchOff } from "react-icons/md";
 
 const Customers = ({ allCustomers, allCompanies }) => {
   const [query, setQuery] = useState("");
@@ -100,11 +102,15 @@ const Customers = ({ allCustomers, allCompanies }) => {
         ))}
       </div>
 
-      {filtered.length === 0 && (
-        <p className="text-white rounded-4xl mt-6 text-center bg-red-800 py-10  w-fit mx-auto px-10">
-          No Customer Found Under This Category
-        </p>
-      )}
+      <div className="pt-16">
+        {filtered.length === 0 && (
+          <EmptyState
+            title="No Customer Found Under This Category"
+            subtitle="There are no customers matching your current filters."
+            color="red"
+          />
+        )}
+      </div>
     </div>
   );
 };
