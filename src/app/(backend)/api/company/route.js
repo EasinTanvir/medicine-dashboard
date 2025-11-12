@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/libs/prismaCli";
+import { revalidateTag } from "next/cache";
 // 🟢 Create a new company
 export async function POST(req) {
   try {
@@ -22,6 +23,8 @@ export async function POST(req) {
         representativePhone: representativePhone || null,
       },
     });
+
+    revalidateTag("company");
 
     return NextResponse.json(newCompany, { status: 201 });
   } catch (error) {

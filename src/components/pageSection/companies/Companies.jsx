@@ -3,96 +3,20 @@
 import React, { useMemo, useState } from "react";
 import { MdOutlineBusiness, MdPerson, MdCall } from "react-icons/md";
 
-// 🧩 Dummy company data
-const companiesData = [
-  {
-    id: 1,
-    name: "Square Pharmaceuticals Ltd.",
-    address: "48, Mohakhali, Dhaka-1212",
-    representativeName: "Rahim Uddin",
-    representativePhone: "01710000001",
-  },
-  {
-    id: 2,
-    name: "Incepta Pharmaceuticals Ltd.",
-    address: "40, Tejgaon I/A, Dhaka-1208",
-    representativeName: "Karim Ahmed",
-    representativePhone: "01710000002",
-  },
-  {
-    id: 3,
-    name: "Beximco Pharmaceuticals Ltd.",
-    address: "19 Dhanmondi, Dhaka",
-    representativeName: "Nusrat Jahan",
-    representativePhone: "01710000003",
-  },
-  {
-    id: 4,
-    name: "Renata Limited",
-    address: "Mirpur DOHS, Dhaka",
-    representativeName: "Javed Khan",
-    representativePhone: "01710000004",
-  },
-  {
-    id: 5,
-    name: "Eskayef Pharmaceuticals Ltd.",
-    address: "Banani, Dhaka",
-    representativeName: "Mita Roy",
-    representativePhone: "01710000005",
-  },
-  {
-    id: 6,
-    name: "ACI Limited",
-    address: "Tejgaon, Dhaka",
-    representativeName: "Farhana Islam",
-    representativePhone: "01710000006",
-  },
-  {
-    id: 7,
-    name: "Opsonin Pharma Limited",
-    address: "Moghbazar, Dhaka",
-    representativeName: "Imran Mir",
-    representativePhone: "01710000007",
-  },
-  {
-    id: 8,
-    name: "Healthcare Pharmaceuticals Ltd.",
-    address: "Uttara, Dhaka",
-    representativeName: "Kamal Hossain",
-    representativePhone: "01710000008",
-  },
-  {
-    id: 9,
-    name: "Aristopharma Ltd.",
-    address: "Dhanmondi, Dhaka",
-    representativeName: "Shamima Noor",
-    representativePhone: "01710000009",
-  },
-  {
-    id: 10,
-    name: "General Pharmaceuticals Ltd.",
-    address: "Badda, Dhaka",
-    representativeName: "Rubel Rana",
-    representativePhone: "01710000010",
-  },
-];
-
-const Companies = () => {
+const Companies = ({ allCompanies = [] }) => {
   const [query, setQuery] = useState("");
 
-  // Filter logic
   const filteredCompanies = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return companiesData;
-    return companiesData.filter(
+    if (!q) return allCompanies;
+
+    return allCompanies.filter(
       (c) =>
-        c.name.toLowerCase().includes(q) ||
-        (c.representativeName &&
-          c.representativeName.toLowerCase().includes(q)) ||
-        (c.representativePhone &&
-          c.representativePhone.toLowerCase().includes(q))
+        c.companyName?.toLowerCase().includes(q) ||
+        c.representativeName?.toLowerCase().includes(q) ||
+        c.representativePhone?.toLowerCase().includes(q)
     );
-  }, [query]);
+  }, [query, allCompanies]);
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -137,7 +61,7 @@ const Companies = () => {
               {/* Company Name */}
               <div className="mb-3">
                 <h3 className="text-lg font-semibold text-gray-800">
-                  {company.name}
+                  {company.companyName}
                 </h3>
                 <p className="text-sm text-gray-500 mt-1">
                   {company.address || "No address provided"}

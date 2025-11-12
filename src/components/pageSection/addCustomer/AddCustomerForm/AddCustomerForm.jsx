@@ -1,9 +1,11 @@
 "use client";
 
 import { companies } from "@/dummydata";
-import React from "react";
+import React, { useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { MdPersonAddAlt1 } from "react-icons/md";
+import api from "@/libs/api";
+import toast from "react-hot-toast";
 
 const AddCustomerForm = () => {
   const {
@@ -17,7 +19,7 @@ const AddCustomerForm = () => {
       customerName: "",
       customerPhone: "",
       customerAddress: "",
-      medicines: [{ medicineName: "", quantity: 1, brand: "" }],
+      medicines: [{ medicineName: "", quantity: 1, companyId: "" }],
     },
   });
 
@@ -26,10 +28,40 @@ const AddCustomerForm = () => {
     name: "medicines",
   });
 
-  const onSubmit = (data) => {
-    console.log("✅ Customer Data:", data);
-    alert("Customer with medicine details added successfully!");
-    reset();
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+
+      // ✅ Prepare the payload to match backend expectation
+      const payload = {
+        customerName: data.customerName,
+        customerPhone: data.customerPhone || null,
+        customerAddress: data.customerAddress || null,
+        medicines: data.medicines.map((m) => ({
+          medicineName: m.medicineName,
+          quantity: Number(m.quantity) || 1,
+          companyId: m.companyId || null,
+        })),
+      };
+
+      // ✅ API call
+      const res = await api.post("/api/customer", payload);
+
+      if (res.status === 201) {
+        toast.success("✅ Customer added successfully!");
+        reset();
+      }
+    } catch (error) {
+      console.error("❌ Error adding customer:", error);
+      const message =
+        error.response?.data?.error ||
+        "Something went wrong while adding the customer.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -164,21 +196,19 @@ const AddCustomerForm = () => {
                 </label>
                 <select
                   defaultValue=""
-                  {...register(`medicines.${index}.brand`)}
+                  {...register(`medicines.${index}.companyId`)}
                   className="w-full border rounded-md px-3 py-2 outline-none focus:ring-2 focus:ring-green-500 border-gray-300 bg-white"
                 >
-                  <option value="" disabled>
-                    Select company
-                  </option>
+                  <option value="">Select company</option>
                   {companies.map((company) => (
-                    <option key={company.id} value={company.slug}>
+                    <option key={company.id} value={company.id}>
                       {company.name}
                     </option>
                   ))}
                 </select>
               </div>
 
-              {/* Remove Button (if more than one) */}
+              {/* Remove Button */}
               {fields.length > 1 && (
                 <div className="sm:col-span-3 flex justify-end">
                   <button
@@ -196,7 +226,9 @@ const AddCustomerForm = () => {
           {/* Add More Medicine Button */}
           <button
             type="button"
-            onClick={() => append({ medicineName: "", quantity: 1, brand: "" })}
+            onClick={() =>
+              append({ medicineName: "", quantity: 1, companyId: "" })
+            }
             className="mt-2 text-sm font-semibold text-green-600 hover:text-green-700"
           >
             + Add More Medicine
@@ -207,9 +239,12 @@ const AddCustomerForm = () => {
         <div className="pt-4">
           <button
             type="submit"
-            className="w-full bg-linear-to-r from-blue-600 to-green-500 text-white font-semibold py-3 rounded-md hover:opacity-90 transition duration-200"
+            disabled={loading}
+            className={`w-full bg-linear-to-r from-blue-600 to-green-500 text-white font-semibold py-3 rounded-md transition duration-200 ${
+              loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
+            }`}
           >
-            Add Customer
+            {loading ? "Adding Customer..." : "Add Customer"}
           </button>
         </div>
       </form>

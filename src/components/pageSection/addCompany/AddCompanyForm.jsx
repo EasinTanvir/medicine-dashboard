@@ -1,8 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdOutlineBusiness } from "react-icons/md";
+import api from "@/libs/api";
+import toast from "react-hot-toast";
 
 const AddCompanyForm = () => {
   const {
@@ -19,10 +21,28 @@ const AddCompanyForm = () => {
     },
   });
 
-  const onSubmit = (data) => {
-    console.log("✅ Company Data Submitted:", data);
-    alert("Company added successfully!");
-    reset();
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
+
+      // 🧾 API call
+      const res = await api.post("/api/company", data);
+
+      if (res.status === 201) {
+        toast.success("✅ Company added successfully!");
+        reset();
+      }
+    } catch (error) {
+      console.error("❌ Error creating company:", error);
+      const message =
+        error.response?.data?.error ||
+        "Something went wrong while adding company.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -117,9 +137,12 @@ const AddCompanyForm = () => {
         <div className="pt-4">
           <button
             type="submit"
-            className="w-full bg-linear-to-r from-indigo-600 to-purple-500 text-white font-semibold py-3 rounded-md hover:opacity-90 transition duration-200"
+            disabled={loading}
+            className={`w-full bg-linear-to-r from-indigo-600 to-purple-500 text-white font-semibold py-3 rounded-md transition duration-200 ${
+              loading ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"
+            }`}
           >
-            Add Company
+            {loading ? "Adding Company..." : "Add Company"}
           </button>
         </div>
       </form>
