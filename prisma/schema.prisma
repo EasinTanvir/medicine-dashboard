@@ -9,26 +9,22 @@ datasource db {
 }
 
 model Customer {
-  id              String      @id @default(auto()) @map("_id") @db.ObjectId
+  id              String              @id @default(auto()) @map("_id") @db.ObjectId
   customerName    String
-  customerPhone   String?     
-  customerAddress String?     
-  medicines       CustomerMedicine[]  // ✅ Relation to CustomerMedicine model
-  createdAt       DateTime    @default(now())
+  customerPhone   String?
+  customerAddress String?
+  medicines       CustomerMedicine[]
+  createdAt       DateTime            @default(now())
 }
 
 model CustomerMedicine {
   id           String    @id @default(auto()) @map("_id") @db.ObjectId
   medicineName String
   quantity     Int       @default(1)
-
-  // Relations
   customerId   String    @db.ObjectId
   customer     Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-
   companyId    String?   @db.ObjectId
   company      Company?  @relation(fields: [companyId], references: [id])
-
   createdAt    DateTime  @default(now())
 }
 
@@ -38,10 +34,10 @@ model Company {
   address              String?
   representativeName   String?
   representativePhone  String?
-  medicines            StockMedicine[] 
+  medicines            StockMedicine[]
+  sales                Sale[]
+  customerMedicines    CustomerMedicine[]
   createdAt            DateTime         @default(now())
-
-  customerMedicines CustomerMedicine[]
 }
 
 model StockMedicine {
@@ -52,5 +48,19 @@ model StockMedicine {
   subTotal     Float     @default(0)
   companyId    String    @db.ObjectId
   company      Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
+}
+
+model Sale {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  medicineName String
+  quantity     Int       @default(1)
+  price        Float     @default(0)
+  subTotal     Float     @default(0)
+  date         DateTime  @default(now())
+
+  companyId    String?   @db.ObjectId
+  company      Company?  @relation(fields: [companyId], references: [id])
+
   createdAt    DateTime  @default(now())
 }
