@@ -36,7 +36,7 @@ const MedicinesCard = ({ data }) => {
           <span className="text-sm font-medium text-gray-600 mb-1">
             Pending
           </span>
-          <div className="px-4 py-2 rounded-full bg-green-50 text-green-700 font-semibold text-lg shadow-sm border border-green-200">
+          <div className="px-4 py-2 rounded-full bg-rose-700 text-white font-semibold text-lg ">
             {pending}
           </div>
         </div>
