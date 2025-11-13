@@ -8,7 +8,7 @@ import Link from "next/link";
 
 const Customers = ({ allCustomers, allCompanies }) => {
   const [query, setQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("pending"); // default: pending
+  const [statusFilter, setStatusFilter] = useState("all"); // default: pending
 
   // 🧠 Filter logic: by search query + status
   const filtered = useMemo(() => {

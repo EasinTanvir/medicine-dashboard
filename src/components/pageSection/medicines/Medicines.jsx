@@ -18,7 +18,7 @@ import Link from "next/link";
 
 const Medicines = ({ allMedicines, companies }) => {
   const [selectedCompany, setSelectedCompany] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("pending");
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const [deleteModal, setDeleteModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
